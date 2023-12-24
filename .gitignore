@@ -1,0 +1,12 @@
+*.yaml
+*.json
+*.pyc
+*.pyo
+__pycache__/
+.idea/
+.vscode/
+log/
+translators/
+adapters/
+plugins/
+config/

@@ -1,0 +1,17 @@
+{
+  "name": "Paimion",
+  "language": "zh",
+  "master": {
+    "adapter_stdin": [
+      "stdin"
+    ]
+  },
+  "log_level": 4,
+  "translator_api": {
+    "name": "aliyun",
+    "token": {
+      "ak": "",
+      "sk": ""
+    }
+  }
+}
