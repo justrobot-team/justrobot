@@ -1,4 +1,5 @@
 import asyncio
+from typing import Union, List, Dict
 
 from ..core.client import Baseclient as client
 from ..core.client import User, Group, Channel, Guild
@@ -10,38 +11,109 @@ from ..core.message import Message as message
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
 class Adapter:
 
+    async def _send_user(
+            self,
+            msg: List[Union[str, bytes]],
+            operation: Dict[str, str] = None
+    ) -> bool:
+        return True
+
+    async def _send_group(
+            self,
+            msg: List[Union[str, bytes]],
+            operation: Dict[str, str] = None
+    ) -> bool:
+        return True
+
+    async def _send_channel(
+            self,
+            msg: List[Union[str, bytes]],
+            operation: Dict[str, str] = None
+    ) -> bool:
+        return True
+
     # 获取 User 实例
     # Get user instance
     def pickUser(
             self,
             uid: str,
-    ) -> User:
-        return User({'id': uid})
+    ) -> object:
+        DefaultUser = User({
+            'id': uid,
+            'adapter': self.id
+        })
+        DefaultUser.load({
+            'send': self._send_user
+        })
+        return DefaultUser
 
     # 获取 Group 实例
     # Get Group instance
     def pickGroup(
             self,
             grid: str
-    ) -> Group:
-        return Group({'id': grid})
+    ) -> object:
+        DefaultGroup = Group({
+            'id': grid,
+            'adapter': self.id
+        })
+        DefaultGroup.load({
+            'send': self._send_group
+        })
+        return DefaultGroup
 
     # 获取 Channel 实例
     # Get channel instance
     def pickChannel(
             self,
             cid: str,
-            guid: str = None
-    ) -> Channel:
-        return Channel({'id': cid})
+            guid: str
+    ) -> object:
+        DefaultChannel = Channel({
+            'id': cid,
+            'adapter': self.id
+        })
+        DefaultChannel.load({
+            'send': self._send_channel
+        })
+        return DefaultChannel
 
     # 获取 Guild 实例
     # Get guild instance
     def pickGuild(
             self,
             guid: str
-    ) -> Guild:
-        return Guild({'id': guid})
+    ) -> object:
+        DefaultGuild = Guild({
+            'id': guid,
+            'adapter': self.id
+        })
+        DefaultGuild.load({})
+        return DefaultGuild
+
+    def get_user_list(self) -> list:
+        return [[self.name, 'default_user']]
+
+    def get_group_list(self) -> list:
+        return [[self.name, 'default_group']]
+
+    def get_channel_list(self) -> list:
+        return [[self.name, 'default_guild', 'default_channel']]
+
+    def get_guild_list(self) -> list:
+        return [[self.name, 'default_guild']]
+
+    async def update_user_list(self) -> None:
+        pass
+
+    async def update_group_list(self) -> None:
+        pass
+
+    async def update_channel_list(self) -> None:
+        pass
+
+    async def update_guild_list(self) -> None:
+        pass
 
     # 实例化构建
     # Instancing
@@ -62,7 +134,7 @@ class Adapter:
         self.log = None
 
         # 根据传入配置信息更新属性
-        # Update properties by passed configuration information
+        # Update properties by passed config
         for key, value in cfg.items():
             setattr(self, key, value)
 
@@ -70,18 +142,18 @@ class Adapter:
     # Loading Adapter
     async def load(
             self,
-            bot,
-            cfg
-    ):
+            bot: object,
+            cfg: dict
+    ) -> None:
         self.cfg = cfg
         self.bot = bot
         self.log = bot.log
 
-        uin = (
-            self.name,
-            self.id,
-            self.version
-        )
+        _uin = {
+            'name': self.name,
+            'id': self.id,
+            'version': self.version
+        }
 
         self.client = client({
             'adapter_name': self.name,
@@ -90,19 +162,28 @@ class Adapter:
             'pickUser': self.pickUser,
             'pickGroup': self.pickGroup,
             'pickChannel': self.pickChannel,
-            'pickGuild': self.pickGuild
+            'pickGuild': self.pickGuild,
+            'update_user_list': self.update_user_list,
+            'update_group_list': self.update_group_list,
+            'update_channel_list': self.update_channel_list,
+            'update_guild_list': self.update_guild_list
         })
 
-        self.bot.append(uin, self.client)
+        self.bot.append(_uin, self.client)
 
         self.basemessage = message({
             "adapter": self.name,
             "bot": self.bot
         })
 
+    # 类继承写法下导入类实例
+    # Load class instance under class inheritance method
+    def load_on(self) -> object:
+        return self
+
     # 接收消息的逻辑示例
     # Example for receiving message
-    async def _recv_msg(self):
+    async def _recv_msg(self) -> dict:
         return {}
 
     # 进行消息格式转换等
@@ -110,7 +191,7 @@ class Adapter:
     async def _deal(
             self,
             _message
-    ):
+    ) -> None:
         await self.log.info('[stdin] 收到消息: ' + _message['msg'])
         e = self.basemessage
 
@@ -138,7 +219,10 @@ class Adapter:
     ) -> bool:
         return True
 
-    def isFriend(self, user):
+    def isFriend(
+            self,
+            user: str
+    ) -> bool:
         return False
 
     # 具体消息接收逻辑后调用deal进行消息处理(简单示例)

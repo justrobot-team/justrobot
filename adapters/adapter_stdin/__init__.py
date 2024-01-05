@@ -13,27 +13,33 @@ class Adapter:
             'id': 'stdin',
             'version': 'stdin',
             '_recv_msg': self._recv_msg,
-            'reply': self.reply
+            'reply': self.reply,
+            'isFriend': self.isFriend
         })
 
-    async def _recv_msg(self):
+    async def _recv_msg(self) -> dict:
         loop = asyncio.get_event_loop()
         _msg = await loop.run_in_executor(None, input, '')
-        msg = {
+        return {
             'seq': 0,
             'notice': 'text',
             'msg': _msg,
             'user': 'stdin',
             'time': time.time()
         }
-        return msg
 
-    def reply(self, message):
+    def reply(
+            self,
+            message
+    ) -> bool:
         print(str(message.time) + ' ' + message.msg)
         return True
 
-    def isFriend(self, user):
+    def isFriend(
+            self,
+            user
+    ) -> bool:
         return True
 
-    def load_on(self):
+    def load_on(self) -> Default:
         return self.Adapter

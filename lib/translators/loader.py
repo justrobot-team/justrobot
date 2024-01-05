@@ -4,7 +4,7 @@ import os
 from collections import OrderedDict
 
 
-class translator:
+class Translator:
 
     def __init__(self, cfg) -> None:
         self._translator_path = './translators'
@@ -14,17 +14,22 @@ class translator:
         self.log = None
         self.lang = None
 
-    def _get_dir_list(self):
+    def _get_dir_list(self) -> None:
 
-        if not os.path.exists(self._translator_path):
+        try:
+            _paths = os.listdir(self._translator_path)
+        except FileNotFoundError:
             os.mkdir(self._translator_path)
-        _paths = os.listdir(self._translator_path)
+            return
         for _path in _paths:
             _new_path = os.path.join(self._translator_path, _path)
             if os.path.isdir(_new_path) and os.path.exists(os.path.join(_new_path, '__init__.py')):
                 self._translators_path.append(f'translators.{_path}')
 
-    async def _load_translator(self, path):
+    async def _load_translator(
+            self,
+            path
+    ) -> None:
 
         _load_success_log = {
             'zh': ': 转译器导入完成',
@@ -62,7 +67,7 @@ class translator:
                 else:
                     await self.log.error(_line)
 
-    def _translator_array(self):
+    def _translator_array(self) -> None:
         _list = [{'name': _name, 'translator': _translator} for _name, _translator in self.translators.items()]
 
         _list = sorted(_list, key=lambda _instance: _instance['translator'].pri)
@@ -71,7 +76,10 @@ class translator:
 
         self.translators = _new_translator
 
-    async def load(self, bot):
+    async def load(
+            self,
+            bot
+    ) -> dict:
 
         self.log = bot.log
         self.lang = bot.lang

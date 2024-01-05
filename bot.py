@@ -1,7 +1,13 @@
 from lib.bot import JustRobot
 
-Bot = JustRobot()
 
-Bot.load()
+def run() -> None:
+    Bot = JustRobot()
 
-Bot.run()
+    Bot.load()
+
+    Bot.run()
+
+
+if __name__ == '__main__':
+    run()

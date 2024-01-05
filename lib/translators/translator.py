@@ -1,3 +1,7 @@
+from typing import Union
+
+
+# noinspection PyMethodMayBeStatic
 class Translator:
     name = 'default_translater'
     event = None
@@ -5,16 +9,29 @@ class Translator:
     bot = None
     cfg = None
 
-    def __init__(self, fnc_dict):
+    def __init__(
+            self,
+            fnc_dict
+    ) -> None:
         for key, fnc in fnc_dict:
             setattr(self, key, fnc)
 
-    def load(self, bot, cfg):
+    def load(
+            self,
+            bot,
+            cfg
+    ) -> None:
         self.bot = bot
         self.cfg = cfg
-    
-    def match(self, e):
-        pass
 
-    def deal(self, e):
+    def matching(
+            self,
+            e
+    ) -> Union[str, bool]:
+        return False
+
+    def deal(
+            self,
+            e
+    ) -> None:
         pass
