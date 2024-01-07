@@ -1,5 +1,5 @@
 import asyncio
-from typing import Union, List, Dict
+from typing import Union
 
 from ..core.client import Baseclient as client
 from ..core.client import User, Group, Channel, Guild
@@ -13,22 +13,19 @@ class Adapter:
 
     async def _send_user(
             self,
-            msg: List[Union[str, bytes]],
-            operation: Dict[str, str] = None
+            _e: object
     ) -> bool:
         return True
 
     async def _send_group(
             self,
-            msg: List[Union[str, bytes]],
-            operation: Dict[str, str] = None
+            _e: object
     ) -> bool:
         return True
 
     async def _send_channel(
             self,
-            msg: List[Union[str, bytes]],
-            operation: Dict[str, str] = None
+            _e: object
     ) -> bool:
         return True
 
@@ -36,8 +33,10 @@ class Adapter:
     # Get user instance
     def pickUser(
             self,
-            uid: str,
-    ) -> object:
+            uid: str = None
+    ) -> Union[object, None]:
+        if not uid:
+            return None
         DefaultUser = User({
             'id': uid,
             'adapter': self.id
@@ -51,8 +50,10 @@ class Adapter:
     # Get Group instance
     def pickGroup(
             self,
-            grid: str
-    ) -> object:
+            grid: str = None
+    ) -> Union[object, None]:
+        if not grid:
+            return None
         DefaultGroup = Group({
             'id': grid,
             'adapter': self.id
@@ -66,9 +67,17 @@ class Adapter:
     # Get channel instance
     def pickChannel(
             self,
-            cid: str,
-            guid: str
-    ) -> object:
+            cid: str = None,
+            guid: str = None
+    ) -> Union[object, None]:
+        if cid and (not guid):
+            self.log.error(f'[{self.name}] 获取子频道实例时应传入服务器 id')
+            return None
+        if (not cid) and guid:
+            self.log.error(f'[{self.name}] 获取子频道实例时应传入子频道 id')
+            return None
+        if (not cid) and (not guid):
+            return None
         DefaultChannel = Channel({
             'id': cid,
             'adapter': self.id
@@ -82,8 +91,10 @@ class Adapter:
     # Get guild instance
     def pickGuild(
             self,
-            guid: str
-    ) -> object:
+            guid: str = None
+    ) -> Union[object, None]:
+        if not guid:
+            return None
         DefaultGuild = Guild({
             'id': guid,
             'adapter': self.id
@@ -163,6 +174,10 @@ class Adapter:
             'pickGroup': self.pickGroup,
             'pickChannel': self.pickChannel,
             'pickGuild': self.pickGuild,
+            'get_user_list': self.get_user_list,
+            'get_group_list': self.get_group_list,
+            'get_channel_list': self.get_channel_list,
+            'get_guild_list': self.get_guild_list,
             'update_user_list': self.update_user_list,
             'update_group_list': self.update_group_list,
             'update_channel_list': self.update_channel_list,
@@ -190,34 +205,43 @@ class Adapter:
     # Translate message type
     async def _deal(
             self,
-            _message
+            _message: dict
     ) -> None:
+        self.client.msg_recv_append()
         await self.log.info('[stdin] 收到消息: ' + _message['msg'])
         e = self.basemessage
 
         e.load({
             'adapter': self.name,
-            'seq': _message["seq"],
-            'notice': _message['notice'],
-            'msg': _message["msg"],
-            'isFriend': self.isFriend(_message['user']),
-            'isMaster': self.bot.isMaster(self.name, _message['user']),
-            'user': self.client.pickUser(_message["user"]),
+            'seq': _message.get("seq"),
+            'notice': _message.get('notice'),
+            'msg': _message.get('msg'),
+            'file': _message.get('file'),
+            'isFriend': self.isFriend(_message.get('user')),
+            'isMaster': self.bot.isMaster(self.name, _message.get('user')),
+            'user': self.client.pickUser(_message.get('user')),
             "group": self.client.pickGroup(_message.get('group')),
-            'channel': self.client.pickChannel(_message.get('channel')),
+            'channel': self.client.pickChannel(_message.get('channel'), _message.get('guild')),
             'guild': self.client.pickGuild(_message.get('guild')),
-            "time": _message["time"],
+            "time": _message.get('time'),
             'reply': self.reply
         })
 
         await self.bot.deal(e)
 
+    async def _send(
+            self,
+            _e: object
+    ) -> bool:
+        self.client.msg_send_append()
+        return True
+
     # 必须方法，用于调用进行消息发送
     async def reply(
             self,
-            _message: message
+            _e: object
     ) -> bool:
-        return True
+        return await self._send(_e)
 
     def isFriend(
             self,

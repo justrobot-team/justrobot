@@ -63,10 +63,10 @@ class User:
 
     # 发送信息(和/或)操作, operation 需提供, msg 参数可选
     # Send message (and/or) operation, 'operation' is needed, 'msg' is optional
-    async def send(self,
-                   msg: List[Union[str, bytes]],
-                   operation: dict = None
-                   ) -> bool:
+    async def send(
+            self,
+            e: object
+    ) -> bool:
         return True
 
 
@@ -128,10 +128,10 @@ class Group:
 
     # 发送信息(和/或)操作, operation 需提供, msg 参数可选
     # Send message (and/or) operation, 'operation' is needed, 'msg' is optional
-    async def send(self,
-                   msg: List[Union[str, bytes]],
-                   operation: dict = None
-                   ) -> bool:
+    async def send(
+            self,
+            e: object
+    ) -> bool:
         return True
 
 
@@ -194,10 +194,10 @@ class Channel:
 
     # 发送信息(和/或)操作, operation 需提供, msg 参数可选
     # Send message (and/or) operation, 'operation' is needed, 'msg' is optional
-    async def send(self,
-                   msg: List[Union[str, bytes]],
-                   operation: Dict[str, str] = None
-                   ) -> bool:
+    async def send(
+            self,
+            e: object
+    ) -> bool:
         return True
 
 
@@ -293,8 +293,8 @@ class Baseclient:
 
     # 消息收发计数
     # Msg I/O counting
-    msg_recv = 0
-    msg_send = 0
+    _msg_recv = 0
+    _msg_send = 0
 
     def __init__(
             self,
@@ -336,6 +336,20 @@ class Baseclient:
             guid: str
     ) -> object:
         return Guild({'id': guid})
+
+    @property
+    def msg_recv(self) -> int:
+        return self._msg_recv
+
+    @property
+    def msg_send(self) -> int:
+        return self._msg_send
+
+    def msg_recv_append(self) -> None:
+        self._msg_recv += 1
+
+    def msg_send_append(self) -> None:
+        self._msg_send += 1
 
     async def get_user_list(self) -> List[list]:
         return [['default_adapter', 'deafult_user']]

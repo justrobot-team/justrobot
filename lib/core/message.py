@@ -9,6 +9,7 @@ class Message:
     seq = str
     notice = str
     msg = str
+    file = Union[bytes, List[bytes]]
     user = None
     group = None
     channel = None
