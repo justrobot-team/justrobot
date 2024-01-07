@@ -14,17 +14,22 @@ class Plugin:
         self.log = None
         self.lang = None
 
-    def _get_dir_list(self):
+    def _get_dir_list(self) -> None:
 
-        if not os.path.exists(self._plugin_path):
+        try:
+            _paths = os.listdir(self._plugin_path)
+        except FileNotFoundError:
             os.mkdir(self._plugin_path)
-        _paths = os.listdir(self._plugin_path)
+            return
         for _path in _paths:
             _new_path = os.path.join(self._plugin_path, _path)
             if os.path.isdir(_new_path) and os.path.exists(os.path.join(_new_path, '__init__.py')):
                 self._plugins_path.append(f'plugins.{_path}')
 
-    async def _load_plugin(self, path):
+    async def _load_plugin(
+            self,
+            path
+    ) -> None:
 
         _load_success_log = {
             'zh': ': 插件导入完成',
@@ -62,7 +67,7 @@ class Plugin:
                 else:
                     await self.log.error(_line)
 
-    def _plugin_array(self):
+    def _plugin_array(self) -> None:
         _list = [{'name': _name, 'plugin': _plugin} for _name, _plugin in self.plugins.items()]
 
         _list = sorted(_list, key=lambda _instance: _instance['plugin'].pri)
@@ -71,7 +76,10 @@ class Plugin:
 
         self.plugins = _new_plugin
 
-    async def load(self, bot):
+    async def load(
+            self,
+            bot
+    ) -> dict:
 
         self.log = bot.log
         self.lang = bot.lang

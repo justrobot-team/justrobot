@@ -21,12 +21,19 @@ class Plugin:
     def __init__(self) -> None:
         pass
 
-    def load(self, bot, cfg) -> None:
+    def load(
+            self,
+            bot,
+            cfg
+    ) -> None:
 
         self.cfg = cfg
         self.bot = bot
 
-    async def matching(self, e) -> Union[str, bool]:
+    async def matching(
+            self,
+            e
+    ) -> Union[str, bool]:
 
         for _reg in self.dsc:
 
@@ -35,6 +42,9 @@ class Plugin:
 
         return False
 
-    async def example(self, e) -> None:
+    async def example(
+            self,
+            e
+    ) -> None:
 
         e.reply(e.msg)

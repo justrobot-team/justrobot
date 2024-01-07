@@ -3,10 +3,12 @@ import os
 from datetime import datetime
 
 
+# 定义一个类用于导入配置
+# Define class: load configs
 # noinspection PyMethodMayBeStatic
 class Config:
 
-    def __init__(self):
+    def __init__(self) -> None:
         # 配置文件地址
         # Configuration file path
         self._config_bot_path = './config/bot.json'
@@ -97,7 +99,7 @@ class Config:
             if not os.path.exists(_path['path']):
                 self._initialize_config(path=_path)
 
-    def _read_bot_config(self):
+    def _read_bot_config(self) -> None:
 
         with open(file=self._config_bot_path, mode='r') as _config:
 
@@ -117,7 +119,10 @@ class Config:
         with open(file=self._config_bot_path, mode='w') as _config:
             json.dump(obj=self._config_bot, fp=_config, indent=2)
 
-    def _read_config(self, _name):
+    def _read_config(
+            self,
+            _name
+    ) -> None:
         with open(file=getattr(self, f'_config_{_name}_path'), mode='r') as _config:
             try:
                 setattr(self, f'_config_{_name}', json.load(fp=_config))
@@ -135,7 +140,7 @@ class Config:
         with open(file=getattr(self, f'_config_{_name}_path'), mode='w') as _config:
             json.dump(obj=getattr(self, f'_config_{_name}'), fp=_config, indent=2)
 
-    async def read_config(self):
+    async def read_config(self) -> tuple:
 
         self._read_bot_config()
         for _name in ['adapter', 'translator', 'plugin']:
@@ -147,7 +152,13 @@ class Config:
 
         return self._config_bot, self._config_adapter, self._config_translator, self._config_plugin
 
-    async def update_config(self, bot, cfg, key, value):
+    async def update_config(
+            self,
+            bot,
+            cfg,
+            key,
+            value
+    ) -> None:
         with open(getattr(self, f'_config_{cfg}_path'), 'r') as _f:
             _cfg = json.load(_f)
 
@@ -158,7 +169,10 @@ class Config:
         # noinspection PyProtectedMember
         setattr(bot._config[cfg], key, value)
 
-    def _initialize_config(self, path):
+    def _initialize_config(
+            self,
+            path
+    ) -> None:
         _config = getattr(self, path['name'])
         _path = path['path']
         with open(_path, 'x') as _f:

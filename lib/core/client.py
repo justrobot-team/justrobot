@@ -18,6 +18,7 @@ class User:
     # Basic parameters
     id = 'default_user'
     name = id
+    adapter = 'default_adapter'
     is_friend = False
     info = {
         'level': 16,
@@ -62,10 +63,10 @@ class User:
 
     # 发送信息(和/或)操作, operation 需提供, msg 参数可选
     # Send message (and/or) operation, 'operation' is needed, 'msg' is optional
-    async def send(self,
-                   msg: list = None,
-                   operation: dict = None
-                   ) -> bool:
+    async def send(
+            self,
+            e: object
+    ) -> bool:
         return True
 
 
@@ -76,6 +77,7 @@ class Group:
     # Basic parameters
     id = 'default_group'
     name = id
+    adapter = 'default_adapter'
     info = {
         'level': 3,
         'size': 100,
@@ -126,10 +128,10 @@ class Group:
 
     # 发送信息(和/或)操作, operation 需提供, msg 参数可选
     # Send message (and/or) operation, 'operation' is needed, 'msg' is optional
-    async def send(self,
-                   msg: list = None,
-                   operation: dict = None
-                   ) -> bool:
+    async def send(
+            self,
+            e: object
+    ) -> bool:
         return True
 
 
@@ -140,6 +142,8 @@ class Channel:
     # Basic parameters
     id = 'default_channel'
     name = id
+    adapter = 'default_adapter'
+    guild = 'default_guild'
     info = {
         'level': 3,
         'size': 100,
@@ -190,10 +194,10 @@ class Channel:
 
     # 发送信息(和/或)操作, operation 需提供, msg 参数可选
     # Send message (and/or) operation, 'operation' is needed, 'msg' is optional
-    async def send(self,
-                   msg: List[Union[str, bytes]] = None,
-                   operation: Dict[str, str] = None
-                   ) -> bool:
+    async def send(
+            self,
+            e: object
+    ) -> bool:
         return True
 
 
@@ -204,6 +208,7 @@ class Guild:
     # Basic parameters
     id = 'default_guild'
     name = id
+    adapter = 'default_adapter'
     info = {
         'level': 3,
         'size': 100,
@@ -254,7 +259,7 @@ class Guild:
     async def pickChannel(
             self,
             cid: str
-    ) -> Channel:
+    ) -> object:
         return Channel({'id': cid})
 
     # 获取成员实例
@@ -262,7 +267,7 @@ class Guild:
     async def pickMember(
             self,
             uid: str
-    ) -> User:
+    ) -> object:
         return User({'id': uid})
 
 
@@ -288,8 +293,8 @@ class Baseclient:
 
     # 消息收发计数
     # Msg I/O counting
-    msg_recv = 0
-    msg_send = 0
+    _msg_recv = 0
+    _msg_send = 0
 
     def __init__(
             self,
@@ -304,7 +309,7 @@ class Baseclient:
     def pickUser(
             self,
             uid: str,
-    ) -> User:
+    ) -> object:
         return User({'id': uid})
 
     # 获取 Group 实例
@@ -312,7 +317,7 @@ class Baseclient:
     def pickGroup(
             self,
             grid: str
-    ) -> Group:
+    ) -> object:
         return Group({'id': grid})
 
     # 获取 Channel 实例
@@ -321,7 +326,7 @@ class Baseclient:
             self,
             cid: str,
             guid: str = None
-    ) -> Channel:
+    ) -> object:
         return Channel({'id': cid})
 
     # 获取 Guild 实例
@@ -329,11 +334,40 @@ class Baseclient:
     def pickGuild(
             self,
             guid: str
-    ) -> Guild:
+    ) -> object:
         return Guild({'id': guid})
 
-    async def get_group_list(self) -> List[str]:
-        return ['deafult_group']
+    @property
+    def msg_recv(self) -> int:
+        return self._msg_recv
 
-    async def get_guild_list(self) -> List[str]:
-        return ['deafult_guild']
+    @property
+    def msg_send(self) -> int:
+        return self._msg_send
+
+    def msg_recv_append(self) -> None:
+        self._msg_recv += 1
+
+    def msg_send_append(self) -> None:
+        self._msg_send += 1
+
+    async def get_user_list(self) -> List[list]:
+        return [['default_adapter', 'deafult_user']]
+
+    async def get_group_list(self) -> List[list]:
+        return [['default_adapter', 'deafult_group']]
+
+    async def get_guild_list(self) -> List[list]:
+        return [['default_adapter', 'deafult_guild']]
+
+    async def update_user_list(self) -> None:
+        pass
+
+    async def update_group_list(self) -> None:
+        pass
+
+    async def update_channel_list(self) -> None:
+        pass
+
+    async def update_guild_list(self) -> None:
+        pass

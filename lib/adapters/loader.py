@@ -3,9 +3,16 @@ import importlib
 import os
 
 
+# 定义一个类用于导入适配器
+# Define class: load Adapters
 class Adapter:
 
-    def __init__(self, cfg) -> None:
+    # 初始化, 传入配置参数
+    # Init and pass in configuration
+    def __init__(
+            self,
+            cfg
+    ) -> None:
         self._adapter_path = './adapters'
         self._adapters_path = []
         self.adapters = {}
@@ -13,15 +20,26 @@ class Adapter:
         self.lang = None
         self.cfg = cfg
 
-    def _get_dir_list(self):
+    # 读取适配器目录, 查找有效适配器
+    # Read adapter directory, find valid adapters
+    def _get_dir_list(self) -> None:
 
-        _paths = os.listdir(self._adapter_path)
+        try:
+            _paths = os.listdir(self._adapter_path)
+        except FileNotFoundError:
+            os.mkdir(self._adapter_path)
+            return
         for _path in _paths:
             _new_path = os.path.join(self._adapter_path, _path)
             if os.path.isdir(_new_path) and os.path.exists(os.path.join(_new_path, '__init__.py')):
                 self._adapters_path.append(f'adapters.{_path}')
 
-    async def _load_adapter(self, path):
+    # 导入并初始化适配器
+    # Load and init adapters
+    async def _load_adapter(
+            self,
+            path
+    ) -> None:
 
         _load_success_log = {
             'zh': ': 适配器导入完成',
@@ -54,7 +72,12 @@ class Adapter:
                 else:
                     await self.log.error(_lines[_i])
 
-    async def load(self, bot) -> dict:
+    # 导入适配器实例并创建映射
+    # Load adapters and create mapping
+    async def load(
+            self,
+            bot
+    ) -> dict:
 
         self.log = bot.log
         self.lang = bot.lang

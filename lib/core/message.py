@@ -9,6 +9,7 @@ class Message:
     seq = str
     notice = str
     msg = str
+    file = Union[bytes, List[bytes]]
     user = None
     group = None
     channel = None
@@ -31,7 +32,10 @@ class Message:
     ) -> None:
         [setattr(self, _key, _info) for _key, _info in parameter.items()]
 
-    def load(self, parameter):
+    def load(
+            self,
+            parameter
+    ) -> None:
         [setattr(self, _key, _value) for _key, _value in parameter.items()]
         if self.group and (not self.guild):
             self.isGroup = True

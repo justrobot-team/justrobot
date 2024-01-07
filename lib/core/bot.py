@@ -15,7 +15,10 @@ class Bot:
         self.plugins = None
         self.bot = None
 
-    def load(self, cfg):
+    def load(
+            self,
+            cfg
+    ) -> None:
         self._loader = Loader(cfg)
         self.log = Log({
             'level': cfg['bot']['log_level'],
@@ -36,5 +39,5 @@ class Bot:
             'plugins': self.plugins
         })
 
-    def run(self):
+    def run(self) -> None:
         asyncio.run(self._loader.run())

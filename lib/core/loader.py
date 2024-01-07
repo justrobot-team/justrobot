@@ -7,7 +7,10 @@ from ..translators.loader import Translator
 
 class Loader:
 
-    def __init__(self, cfg) -> None:
+    def __init__(
+            self,
+            cfg
+    ) -> None:
         self._adapter = Adapter(cfg['adapter'])
         self._translator = Translator(cfg['translator'])
         self._plugin = Plugin(cfg["plugin"])
@@ -17,7 +20,10 @@ class Loader:
         self.translators = {}
         self.plugins = {}
 
-    async def load(self, bot):
+    async def load(
+            self,
+            bot
+    ) -> tuple:
         self.bot = bot
         self.adapters = await self._adapter.load(bot)
         self.translators = await self._translator.load(bot)
@@ -32,7 +38,7 @@ class Loader:
 
         return self.translators, self.plugins
 
-    async def run(self):
+    async def run(self) -> None:
         if not self.adapters:
             await self.bot.log.info({
                 'zh': '[Bot] 未检测到可用适配器',
