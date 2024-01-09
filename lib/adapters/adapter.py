@@ -265,14 +265,6 @@ class Adapter:
         # Simple example
         while True:
 
-            try:
-                msg = await self._recv_msg()
+            msg = await self._recv_msg()
 
-                _ = asyncio.create_task(self._deal(msg))
-
-            except asyncio.CancelledError:
-
-                await self.log.info({
-                    'zh': f'[{self.name}] 协程被取消',
-                    'en': f'[{self.name}] Coroutine canceled'
-                    })
+            _ = asyncio.create_task(self._deal(msg))
