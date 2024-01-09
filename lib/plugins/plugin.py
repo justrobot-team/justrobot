@@ -1,22 +1,26 @@
 import re
 from typing import Union
-
+from ..core.message import ReplyMessage
 
 # 插件类的实例
 # noinspection PyMethodMayBeStatic
 class Plugin:
-    name = 'default_plugin'
-    notice = None
-    event = None
-    pri = 1000
+    
+    name = 'default-plugin'
+    notice: str
+    event: str
+    replymessage: object
+
+    pri: int
     dsc = [
         {
             'reg': r'.*',
             'fnc': 'example'
         }
     ]
-    bot = None
-    cfg = None
+    
+    bot: object
+    cfg: dict
 
     def __init__(self) -> None:
         pass
@@ -29,6 +33,12 @@ class Plugin:
 
         self.cfg = cfg
         self.bot = bot
+        self.replymessage = ReplyMessage
+        self.log = bot.log
+        self.log.info({
+            'zh': f'[{self.name}] 插件已载入',
+            'en': f'[{self.name}] Plugin has been loaded'
+        })
 
     async def matching(
             self,
@@ -47,4 +57,8 @@ class Plugin:
             e
     ) -> None:
 
-        e.reply(e.msg)
+        e.reply(
+            self.replymessage(e).reply(
+                msg=e.msg
+            )
+        )
