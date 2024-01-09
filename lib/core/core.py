@@ -106,7 +106,7 @@ class Plugin:
     def __init__(
             self,
             plugins: dict,
-            log=None
+            bot: object
     ) -> None:
         """
         中文:
@@ -124,7 +124,7 @@ class Plugin:
         :return: None.
         """
         self.plugins = plugins
-        self.log = log
+        self.bot = bot
 
     async def deal(
             self,
@@ -289,7 +289,6 @@ class Core:
             self,
             log: object,
             cfg: dict,
-            replymessage: object
     ) -> None:
         """
         中文:
@@ -343,9 +342,11 @@ class Core:
         """
         self._translators = Translator(
             translators=instances['translators'],
+            bot=self
         )
         self._plugins = Plugin(
             plugins=instances['plugins'],
+            bot=self
         )
 
     def append(
@@ -388,19 +389,25 @@ class Core:
         :param e: The message to be dealed.
         :return: None.
         """
-        if e.msg in ['/关机', '/shutdown'] and self.isMaster(e.adapter, e.uid):
-            await self.log.info({
-                    'zh': '[Bot] 关机中...',
-                    'en': '[Bot] Shutting down...'
-            })
-            _ = asyncio.ensure_future(self._shutdown())
-            await asyncio.sleep(5)
-            await self.log.info({
-                'zh': '[Bot] 关机超时，尝试强行终止进程',
-                'en': '[Bot] Shutdown timeout, try to force terminate the process'
-            })
-            # noinspection PyProtectedMember
-            os._exit(1)
+        if e.msg in ['/关机', '/shutdown']:
+            if self.isMaster(e.adapter, e.user.id):
+                await self.log.info({
+                        'zh': '[Bot] 关机中...',
+                        'en': '[Bot] Shutting down...'
+                })
+                _ = asyncio.ensure_future(self._shutdown())
+                await asyncio.sleep(10)
+                await self.log.info({
+                    'zh': '[Bot] 关机超时，尝试强行终止进程',
+                    'en': '[Bot] Shutdown timeout, try to force terminate the process'
+                })
+                # noinspection PyProtectedMember
+                os._exit(1)
+            else:
+                await self.log.info({
+                    'zh': f'[Bot] {e.adapter} 下 {e.user} 不具有主人权限',
+                    'en': f'[Bot] {e.user} under {e.adapter} does not have master permission'
+                })
         if self.translator_name_list:
             await self._translators.deal(e)
         if self.plugin_name_list:
@@ -414,7 +421,7 @@ class Core:
         English:
         Send a cancel signal to all coroutines, wait for them to be cancelled and then shut down the bot.
         """
-        [_task.cancel() for _task in asyncio.Task.all_tasks(self.loop)]
+        [_task.stop() for _task in asyncio.Task.all_tasks(self.loop)]
         exit(0)
 
     @property
@@ -482,10 +489,10 @@ class Core:
         try:
             return user in self._config['master'][adapter_name]
         except KeyError:
-            self.log.error({
+            asyncio.create_task(self.log.error({
                 'zh': f'[Bot] {adapter_name} 不存在或未设置主人',
                 'en': f'[Bot] {adapter_name} does not exist or master not set'
-            })
+            }))
             return False
 
     def get_user_list(self) -> list:

@@ -41,19 +41,22 @@ class Adapter:
             path
     ) -> None:
 
-        _load_success_log = {
-            'zh': ': 适配器导入完成',
-            'en': ': Adapter loaded'
-        }
-        _load_fail_log = {
-            'zh': ': 适配器导入失败:',
-            'en': ': Adapter loading failed'
-        }
+        _load_success_log = [
+            ': 适配器导入完成',
+            ': Adapter loaded'
+        ]
+        _load_fail_log = [
+            ': 适配器导入失败:',
+            ': Adapter loading failed:'
+            ]
 
         try:
             _adapter = importlib.import_module(path).Adapter().load_on()
             self.adapters[_adapter.name] = _adapter
-            await self.log.info('[loader] ' + _adapter.name + _load_success_log[self.lang])
+            await self.log.info({
+                'zh': f'[loader] {_adapter.name}{_load_success_log[0]}',
+                'en': f'[loader] {_adapter.name}{_load_success_log[1]}'
+                })
 
         except (
                 ModuleNotFoundError,
@@ -68,7 +71,10 @@ class Adapter:
             _lines = _e.args[0].splitlines()
             for _i in range(len(_lines)):
                 if _i == 0:
-                    await self.log.error(f'[loader] {path} ' + _load_fail_log[self.lang] + f': {_lines[0]}')
+                    await self.log.error({
+                        'zh': f'[loader] {path} ' + _load_fail_log[0] + f': {_lines[0]}',
+                        'en': f'[loader] {path} ' + _load_fail_log[1] + f': {_lines[0]}'
+                        })
                 else:
                     await self.log.error(_lines[_i])
 

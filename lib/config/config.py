@@ -21,7 +21,7 @@ class Config:
             "name": "Paimion",
             "language": "zh",
             "master": {
-                "adapter_stdin": [
+                "stdin-adapter": [
                     "stdin"
                 ]
             },
