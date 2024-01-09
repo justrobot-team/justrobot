@@ -4,10 +4,10 @@
 __pycache__/
 .idea/
 .vscode/
-log/
-translators/
-plugins/
-config/
+/log/
+/translators/
+/plugins/
+/config/
 /adapters/*
 !/adapters/adapter_stdin/
 /resources/*
