@@ -1,7 +1,7 @@
 from lib.bot import JustRobot
 
 
-def run() -> None:
+def main() -> None:
     Bot = JustRobot()
 
     Bot.load()
@@ -10,4 +10,4 @@ def run() -> None:
 
 
 if __name__ == '__main__':
-    run()
+    main()

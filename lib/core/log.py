@@ -54,13 +54,15 @@ class Log:
             msg
     ) -> None:
 
-        if isinstance(msg, dict):
+        def _get_msg(
+                _msg: dict
+                ) -> str:
             try:
-                _msg = msg[self.lang]
+                return _msg.get(self.lang, msg['en'])
             except KeyError:
-                _msg = msg[0]
-        else:
-            _msg = msg
+                return _msg[next(iter(msg))]
+        
+        _msg = _get_msg(msg) if isinstance(msg, dict) else msg
 
         if self.level >= getattr(self, level):
             _time = datetime.now().strftime("%H:%M:%S:%f")[:-3]

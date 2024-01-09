@@ -71,10 +71,16 @@ class Adapter:
             guid: str = None
     ) -> Union[object, None]:
         if cid and (not guid):
-            self.log.error(f'[{self.name}] 获取子频道实例时应传入服务器 id')
+            self.log.error({
+                'zh': f'[{self.name}] 获取子频道实例时应传入服务器 id',
+                'en': f'[{self.name}] Should pass in guild id when getting channel instance'
+                })
             return None
         if (not cid) and guid:
-            self.log.error(f'[{self.name}] 获取子频道实例时应传入子频道 id')
+            self.log.error({
+                'zh': f'[{self.name}] 获取子频道实例时应传入子频道 id',
+                'en': f'[{self.name}] Should pass in channel id when getting channel instance'
+                })
             return None
         if (not cid) and (not guid):
             return None
@@ -136,7 +142,7 @@ class Adapter:
         # 默认参数
         # default parameters
         self.basemessage = None
-        self.name = 'default_adapter_name'
+        self.name = 'default-name-adapter'
         self.client = None
         self.version = 'default_version'
         self.id = 'default_id'
@@ -208,7 +214,11 @@ class Adapter:
             _message: dict
     ) -> None:
         self.client.msg_recv_append()
-        await self.log.info('[stdin] 收到消息: ' + _message['msg'])
+        adapter_name_initial = self.name.replace('-adapter', '')
+        await self.log.info({
+            'zh': f'[{adapter_name_initial}] 收到消息: ' + _message['msg'],
+            'en': f'[{adapter_name_initial}] Message received: ' + _message['msg']
+            })
         e = self.basemessage
 
         e.load({
@@ -262,4 +272,7 @@ class Adapter:
 
             except asyncio.CancelledError:
 
-                await self.log.info(f'[{self.name}] 协程被取消')
+                await self.log.info({
+                    'zh': f'[{self.name}] 协程被取消',
+                    'en': f'[{self.name}] Coroutine canceled'
+                    })

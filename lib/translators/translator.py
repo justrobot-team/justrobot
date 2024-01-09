@@ -3,7 +3,7 @@ from typing import Union
 
 # noinspection PyMethodMayBeStatic
 class Translator:
-    name = 'default_translater'
+    name = 'default-translater'
     event = None
     pri = 1000
     bot = None

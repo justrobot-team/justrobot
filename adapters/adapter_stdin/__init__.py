@@ -10,7 +10,7 @@ class Adapter:
 
     def __init__(self) -> None:
         self.Adapter = Default({
-            'name': 'adapter_stdin',
+            'name': 'stdin-adapter',
             'id': 'stdin',
             'version': 'stdin',
             '_recv_msg': self._recv_msg,
