@@ -123,6 +123,7 @@ class Message:
 # 单回复简化消息
 # Single reply simplified message
 class ReplyMessage:
+
     def __init__(
             self,
             e: object
@@ -142,13 +143,14 @@ class ReplyMessage:
         """
         # 传入参数
         # Incoming parameters
-        self.msg: str
-        self.file: Union[bytes, List[bytes]]
-        self.at_sender: bool
-        self.notice: str
-        self.operation: str
+        self.msg: Union[str, None] = None
+        self.file: Union[bytes, List[bytes], None] = None
+        self.at_sender: bool = False
+        self.notice: str = 'text'
+        self.operation: Union[str, None] = None
         self.adapter_name = e.adapter_name
         self.log = e.log
+        self.e = e
 
     # 回复消息
     # Reply message
@@ -179,11 +181,11 @@ class ReplyMessage:
         :param operation: Operation list
         :return: Whether the message was sent successfully
         """
-        
+
         # 使用消息对象进行回复
         # Reply using message object
         if e:
-            return await self._send(e)
+            return await self.e.reply(e)
 
         # 发送消息
         # Send message
@@ -200,7 +202,7 @@ class ReplyMessage:
                 self.log.warn({
                     'zh': f'[{self.adapter_name}] 文件类型错误，应当为 bytes 或 list',
                     'en': f'[{self.adapter_name}] File type error, should be bytes or list'
-                    })
+                })
             # 发送消息的同时不能进行操作
             # Cannot operate while sending messages
             if operation:
@@ -208,17 +210,17 @@ class ReplyMessage:
                     'zh': f'[{self.adapter_name}] 发送消息的同时不能进行操作',
                     'en': f'[{self.adapter_name}] Cannot operate while sending messages'
                 })
-            return self
-        
+            return self.e.reply(self)
+
         # 消息类型错误，应当为 str
         # Message type error, should be str
         if msg and (not isinstance(msg, str)):
             self.log.warn({
                 'zh': f'[{self.adapter_name}] 消息类型错误，应当为 str',
                 'en': f'[{self.adapter_name}] Message type error, should be str'
-                })
+            })
             return False
-        
+
         # 发送文件
         # Send file
         if (not msg) and isinstance(file, (bytes, list)):
@@ -232,17 +234,17 @@ class ReplyMessage:
                     'zh': f'[{self.adapter_name}] 发送文件的同时不能进行操作',
                     'en': f'[{self.adapter_name}] Cannot operate while sending files'
                 })
-            return self
-        
+            return self.e.reply(self)
+
         # 文件类型错误，应当为 bytes 或 list
         # File type error, should be bytes or list
         if file and (not isinstance(file, (bytes, list))):
             self.log.warn({
                 'zh': f'[{self.adapter_name}] 文件类型错误，应当为 bytes 或 list',
                 'en': f'[{self.adapter_name}] File type error, should be bytes or list'
-                })
+            })
             return False
-        
+
         # 进行操作
         # Perform operation
         if (not msg) and (not file):
@@ -267,5 +269,5 @@ class ReplyMessage:
                     'en': f'[{self.adapter_name}] Message cannot be empty'
                 })
                 return False
-            
-            return self
+
+            return self.e.reply(self)
