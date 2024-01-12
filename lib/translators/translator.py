@@ -1,6 +1,8 @@
 from typing import Union
 
 
+# 转译器基类
+# TODO: 增加一个数据库接口
 # noinspection PyMethodMayBeStatic
 class Translator:
     name = 'default-translater'

@@ -172,6 +172,8 @@ class Plugin:
                     })
 
 
+# 机器人实例
+# TODO: 增加一个数据库功能，方便适配器、转译器、插件存储数据
 # noinspection PyMethodMayBeStatic
 class Core:
     """

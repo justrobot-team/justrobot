@@ -6,7 +6,9 @@ from ..core.client import User, Group, Channel, Guild
 from ..core.message import Message as message
 
 
-# 适配器类
+# 适配器基类
+# TODO: 增加一个数据库接口
+# TODO: 增加一个简易构建类
 # Instance Adapter
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
 class Adapter:
@@ -74,13 +76,13 @@ class Adapter:
             self.log.error({
                 'zh': f'[{self.name}] 获取子频道实例时应传入服务器 id',
                 'en': f'[{self.name}] Should pass in guild id when getting channel instance'
-                })
+            })
             return None
         if (not cid) and guid:
             self.log.error({
                 'zh': f'[{self.name}] 获取子频道实例时应传入子频道 id',
                 'en': f'[{self.name}] Should pass in channel id when getting channel instance'
-                })
+            })
             return None
         if (not cid) and (not guid):
             return None
@@ -218,7 +220,7 @@ class Adapter:
         await self.log.info({
             'zh': f'[{adapter_name_initial}] 收到消息: ' + _message['msg'],
             'en': f'[{adapter_name_initial}] Message received: ' + _message['msg']
-            })
+        })
         e = self.basemessage
 
         e.load({
@@ -264,7 +266,6 @@ class Adapter:
         # 简单示例
         # Simple example
         while True:
-
             msg = await self._recv_msg()
 
             _ = asyncio.create_task(self._deal(msg))
