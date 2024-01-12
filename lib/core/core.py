@@ -66,9 +66,9 @@ class Translator:
         English:
         Match then deal with the message.
 
-        :param e: The message to be dealed.
+        :param e: The message to be dealt.
 
-        :return None.
+        :return: None.
         """
         for _, _translator in self.translators.items():
 
@@ -87,7 +87,7 @@ class Plugin:
 
     属性:
         plugins (dict): 包含插件的字典。
-        log (可选): 日志实例。
+        bot (可选): 机器人实例。
 
     方法:
         deal: 进行消息处理。
@@ -97,7 +97,7 @@ class Plugin:
 
     Args:
         plugins (dict): A dictionary containing plugins.
-        log (optional): The log instance.
+        bot (optional): The robot instance.
     
     Methods:
         deal: Deal message.
@@ -113,14 +113,14 @@ class Plugin:
         初始化 Plugin 类。
 
         :param plugins: 包含插件的字典。
-        :param log: 日志实例。
+        :param bot: 机器人实例。
         :return: None.
 
         English:
         Initializes the Plugin class.
 
         :param plugins: A dictionary containing plugins.
-        :param log: The log instance.
+        :param bot: The robot instance.
         :return: None.
         """
         self.plugins = plugins
@@ -140,7 +140,7 @@ class Plugin:
         English:
         Match then deal with the message.
 
-        :param e: The message to be dealed.
+        :param e: The message to be dealt.
         :return: None
         """
         for _, _plugin in self.plugins.items():
@@ -166,7 +166,7 @@ class Plugin:
 
                 except AttributeError:
 
-                    self.log.error({
+                    self.bot.log.error({
                         'zh': f'[{_plugin.name}] 未找到对应方法，跳过处理',
                         'en': f'[{_plugin.name}] Skipped as no corresponding method'
                     })
@@ -174,8 +174,7 @@ class Plugin:
 
 # noinspection PyMethodMayBeStatic
 class Core:
-
-    """ 
+    """
     中文:
     代表机器人的核心功能。
 
@@ -386,14 +385,14 @@ class Core:
         English:
         Match then deal with the message.
 
-        :param e: The message to be dealed.
+        :param e: The message to be dealt.
         :return: None.
         """
         if e.msg in ['/关机', '/shutdown']:
             if self.isMaster(e.adapter, e.user.id):
                 await self.log.info({
-                        'zh': '[Bot] 关机中...',
-                        'en': '[Bot] Shutting down...'
+                    'zh': '[Bot] 关机中...',
+                    'en': '[Bot] Shutting down...'
                 })
                 _ = asyncio.ensure_future(self._shutdown())
                 await asyncio.sleep(10)
@@ -416,10 +415,10 @@ class Core:
     async def _shutdown(self) -> None:
         """
         中文:
-        向全部协程发送取消信号，等待其全部取消后并关闭机器人。
+        向全部协程发送取消信号，等待其全部取消后关闭机器人。
 
         English:
-        Send a cancel signal to all coroutines, wait for them to be cancelled and then shut down the bot.
+        Send a cancel signal to all coroutines, wait for them to be cancelled then shut down the bot.
         """
         [_task.stop() for _task in asyncio.Task.all_tasks(self.loop)]
         exit(0)
@@ -567,7 +566,7 @@ class Core:
             self.log.warn({
                 'zh': f'[Bot]未查找到用户{uid}',
                 'en': f'[Bot]User {uid} not found'
-                })
+            })
             return []
 
         return _user
@@ -664,26 +663,26 @@ class Core:
                 return await _error([
                     f'uid 长度不符合要求: {len(uid)} 不是合法的 uid 长度',
                     f'uid length does not meet the requirements: {len(uid)} is not a valid uid length'
-                    ])
+                ])
 
             if uid[0] not in self.adapter_name_list:
                 return await _error([
                     f'适配器不存在或类型错误: {uid[0]}: {type(uid[0])}',
                     f'Adapter does not exist or type error: {uid[0]}: {type(uid[0])}'
-                    ])
+                ])
 
             if not isinstance(uid[1], str):
                 return await _error([
                     f'错误的用户 id 类型: {type(uid[1])}',
                     f'Incorrect user id type: {type(uid[1])}'
-                    ])
+                ])
 
         elif isinstance(uid, (str, int, float)):
             if not adapter_name:
                 return await _error([
                     '缺少参数: adapter_name',
                     'Missing parameter: adapter_name'
-                    ])
+                ])
 
             uid = [adapter_name, str(uid)]
 
@@ -691,13 +690,13 @@ class Core:
             return await _error([
                 f'uid 类型错误: {type(uid)} 不是 list, str, int, float',
                 f'uid type error: {type(uid)} is not list, str, int, float'
-                ])
+            ])
 
         if uid in self._user_list:
             return await _error([
                 f'不能重复添加用户 {uid[1]}',
                 f'Cannot add user {uid[1]} repeatedly'
-                ])
+            ])
 
         self._set_user_list(uid)
         return True
@@ -728,26 +727,26 @@ class Core:
                 return await _error([
                     f'grid 长度不符合要求: {len(grid)} 不是合法的 grid 长度',
                     f'grid length does not meet the requirements: {len(grid)} is not a valid grid length'
-                    ])
+                ])
 
             if grid[0] not in self.adapter_name_list:
                 return await _error([
                     f'适配器不存在或类型错误: {grid[0]}: {type(grid[0])}',
                     f'Adapter does not exist or type error: {grid[0]}: {type(grid[0])}'
-                    ])
+                ])
 
             if not isinstance(grid[1], str):
                 return await _error([
                     f'错误的群聊 id 类型: {type(grid[1])}',
                     f'Incorrect group id type: {type(grid[1])}'
-                    ])
+                ])
 
         elif isinstance(grid, (str, int, float)):
             if not adapter_name:
                 return await _error([
                     '缺少参数: adapter_name',
                     'Missing parameter: adapter_name'
-                    ])
+                ])
 
             grid = [adapter_name, grid]
 
@@ -755,13 +754,13 @@ class Core:
             return await _error([
                 f'grid 类型错误: {type(grid)} 不是 list, str, int, float',
                 f'grid type error: {type(grid)} is not list, str, int, float'
-                ])
+            ])
 
         if grid in self._group_list:
             return await _error([
                 f'不能重复添加群聊 {grid[1]}',
                 f'Cannot add group {grid[1]} repeatedly'
-                ])
+            ])
 
         self._set_group_list(grid)
         return True
@@ -793,62 +792,62 @@ class Core:
                 return await _error([
                     f'cid 长度不符合要求: {len(cid)} 不是合法的 cid 长度',
                     f'cid length does not meet the requirements: {len(cid)} is not a valid cid length'
-                    ])
+                ])
 
             if cid[0] not in self.adapter_name_list:
                 return await _error([
                     f'适配器不存在或类型错误: {cid[0]}',
                     f'Adapter does not exist or type error: {cid[0]}'
-                    ])
+                ])
 
             if [cid[0], cid[1]] not in self._guild_list:
                 return await _error([
                     f'不能向不存在的服务器 {cid[1]} 添加子频道或类型错误',
                     f'Cannot add sub-channel or type error to non-existent server {cid[1]}'
-                    ])
+                ])
 
             if not isinstance(cid[2], str):
                 return await _error([
                     f'错误的子频道 id 类型: {type(cid[2])}',
                     f'Incorrect channel id type: {type(cid[2])}'
-                    ])
+                ])
 
         elif isinstance(cid, (str, int, float)):
             if not guid:
                 return await _error([
                     '缺少参数: guild_name',
                     'Missing parameter: guild_name'
-                    ])
+                ])
 
             if not adapter_name:
                 return await _error([
                     '缺少参数: adapter_name',
                     'Missing parameter: adapter_name'
-                    ])
+                ])
 
             if not isinstance(guid, (str, int, float)):
                 return await _error([
                     f'guid 类型错误: {type(guid)} 不是 str, int, float',
                     f'guid type error: {type(guid)} is not str, int, float'
-                    ])
+                ])
 
             if not isinstance(adapter_name, str):
                 return await _error([
                     f'adapter_name 类型错误: {type(adapter_name)} 不是 str',
                     f'adapter_name type error: {type(adapter_name)} is not str'
-                    ])
+                ])
 
             if adapter_name not in self.adapter_name_list:
                 return await _error([
                     f'适配器不存在: {adapter_name}',
                     f'Adapter does not exist: {adapter_name}'
-                    ])
+                ])
 
             if [adapter_name, str(guid)] not in self._guild_list:
                 return await _error([
                     f'不能向不存在的服务器 {cid[1]} 添加子频道',
                     f'Cannot add sub-channel to non-existent server {cid[1]}'
-                    ])
+                ])
 
             cid = [adapter_name, str(guid), cid]
 
@@ -856,13 +855,13 @@ class Core:
             return await _error([
                 f'cid 类型错误: {type(cid)} 不是 list, str, int. float',
                 f'cid type error: {type(cid)} is not list, str, int. float'
-                ])
+            ])
 
         if cid in self._channel_list:
             return await _error([
                 f'不嫩重复添加子频道 {cid[2]} 到服务器 {cid[1]}',
                 f'Cannot add sub-channel {cid[2]} repeatedly to server {cid[1]}'
-                ])
+            ])
 
         self._set_channel_list(cid)
         return True
@@ -893,26 +892,26 @@ class Core:
                 return await _error([
                     f'guid 长度不满足要求: {len(guid)} 不是合法的guid长度',
                     f'guid length does not meet the requirements: {len(guid)} is not a valid guid length'
-                    ])
+                ])
 
             if guid[0] not in self.adapter_name_list:
                 return await _error([
                     f'适配器不存在或类型错误: {guid[0]}',
                     f'Adapter does not exist or type error: {guid[0]}'
-                    ])
+                ])
 
             if not isinstance(guid[1], str):
                 return await _error([
                     f'错误的服务器 id 类型: {type(guid[1])}',
                     f'Incorrect guild id type: {type(guid[1])}'
-                    ])
+                ])
 
         elif isinstance(guid, (str, int, float)):
             if not adapter_name:
                 return await _error([
                     '缺少参数: adapter_name',
                     'Missing parameter: adapter_name'
-                    ])
+                ])
 
             guid = [adapter_name, str(guid)]
 
@@ -920,7 +919,7 @@ class Core:
             return await _error([
                 f'错误的 guid 类型: {type(guid)} 不是 list, str, int. float',
                 f'Incorrect guid type: {type(guid)} is not list, str, int. float'
-                ])
+            ])
 
         self._set_guild_list(guid)
         return True
@@ -940,7 +939,7 @@ class Core:
                 await self.log.error({
                     'zh': f'[{_client.name}] 未找到方法 update_user_list',
                     'en': f'[{_client.name}] Method update_user_list not found'
-                    })
+                })
 
     async def update_group_list(self) -> None:
         for _, _client in self.client.items():
@@ -950,7 +949,7 @@ class Core:
                 await self.log.error({
                     'zh': f'[{_client.name}] 未找到方法 update_group_list',
                     'en': f'[{_client.name}] Method update_group_list not found'
-                    })
+                })
 
     async def update_channel_list(self) -> None:
         for _, _client in self.client.items():
@@ -960,7 +959,7 @@ class Core:
                 await self.log.error({
                     'zh': f'[{_client.name}] 未找到方法 update_channel_list',
                     'en': f'[{_client.name}] Method update_channel_list not found'
-                    })
+                })
 
     async def update_guild_list(self) -> None:
         for _, _client in self.client.items():
@@ -970,4 +969,4 @@ class Core:
                 await self.log.error({
                     'zh': f'[{_client.name}] 未找到方法 update_guild_list',
                     'en': f'[{_client.name}] Method update_guild_list not found'
-                    })
+                })

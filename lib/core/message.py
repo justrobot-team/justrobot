@@ -158,6 +158,7 @@ class ReplyMessage:
             self,
             e: object = None,
             msg: str = None,
+            quote: bool = False,
             file: Union[bytes, List[bytes]] = None,
             at_sender: bool = False,
             operation: List[Dict[str, str]] = None,
@@ -167,8 +168,9 @@ class ReplyMessage:
         回复消息的方法
         :param e: 异常对象
         :param msg: 消息内容
+        :param quote: 是否进行回复
         :param file: 文件内容
-        :param at_sender: 是否@发送者
+        :param at_sender: 是否艾特发送者
         :param operation: 操作列表
         :return: 是否成功发送消息
 
@@ -176,6 +178,7 @@ class ReplyMessage:
         The method for replying to messages
         :param e: Exception object
         :param msg: Message content
+        :param quote: Whether to quote
         :param file: File content
         :param at_sender: Whether to at the sender
         :param operation: Operation list
@@ -192,10 +195,10 @@ class ReplyMessage:
         if isinstance(msg, str):
             self.msg = msg
             self.at_sender = at_sender
-            self.notice = 'text'
+            self.notice = 'text' if not quote else 'quote text'
             if isinstance(file, (bytes, list)):
                 self.file = file
-                self.notice = 'rich message'
+                self.notice = 'rich message' if quote else 'quote rich message'
             # 文件类型错误，应当为 bytes 或 list
             # File type error, should be bytes or list
             if file:
@@ -215,7 +218,7 @@ class ReplyMessage:
         # 消息类型错误，应当为 str
         # Message type error, should be str
         if msg and (not isinstance(msg, str)):
-            self.log.warn({
+            self.log.error({
                 'zh': f'[{self.adapter_name}] 消息类型错误，应当为 str',
                 'en': f'[{self.adapter_name}] Message type error, should be str'
             })
@@ -225,7 +228,7 @@ class ReplyMessage:
         # Send file
         if (not msg) and isinstance(file, (bytes, list)):
             self.file = file
-            self.notice = 'file'
+            self.notice = 'file' if not quote else 'quote file'
             self.at_sender = at_sender
             # 发送文件的同时不能进行操作
             # Cannot operate while sending files
@@ -239,7 +242,7 @@ class ReplyMessage:
         # 文件类型错误，应当为 bytes 或 list
         # File type error, should be bytes or list
         if file and (not isinstance(file, (bytes, list))):
-            self.log.warn({
+            self.log.error({
                 'zh': f'[{self.adapter_name}] 文件类型错误，应当为 bytes 或 list',
                 'en': f'[{self.adapter_name}] File type error, should be bytes or list'
             })
@@ -251,9 +254,13 @@ class ReplyMessage:
             if operation:
                 self.operation = operation
                 self.notice = 'operation'
+                self.log.warn({
+                    'zh': f'[{self.adapter_name}] 进行操作的同时不能进行回复',
+                    'en': f'[{self.adapter_name}] Cannot operate while replying'
+                }) if quote else None
             if (not operation) and at_sender:
                 self.at_sender = at_sender
-                self.notice = 'at'
+                self.notice = 'at' if not quote else 'quote at'
             # 进行操作的同时不能进行 at
             # Cannot operate while at
             if operation and at_sender:
@@ -264,7 +271,7 @@ class ReplyMessage:
             # 要发送消息不能为空
             # Message cannot be empty
             if (not operation) and (not at_sender):
-                self.log.warn({
+                self.log.error({
                     'zh': f'[{self.adapter_name}] 要发送消息不能为空',
                     'en': f'[{self.adapter_name}] Message cannot be empty'
                 })
