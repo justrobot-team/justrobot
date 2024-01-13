@@ -8,6 +8,45 @@ from ..core.message import ReplyMessage
 # TODO: 增加一个数据库接口
 # noinspection PyMethodMayBeStatic
 class Plugin:
+    """
+    中文:
+    插件基类
+
+    属性:
+        name: 插件名称
+        notice: 监听消息类型
+        event: 监听事件类型
+        replymessage: 回复消息构建实例
+        pri: 优先级
+        dsc: 匹配式
+        bot: 机器人实例
+        cfg: 配置信息
+        log: 日志实例
+
+    方法:
+        load: 插件载入
+        matching: 消息匹配
+        example: 示例函数
+
+    English:
+    Plugin base class
+
+    Attribute:
+        name: Plugin name
+        notice: Listening message type
+        event: Listening event type
+        replymessage: Reply message construction instance
+        pri: Priority
+        dsc: Matching type
+        bot: Bot instance
+        cfg: Configuration information
+        log: Log instance
+
+    Method:
+        load: Plugin loading
+        matching: Message matching
+        example: Example function
+    """
     # 名称
     name = 'default-plugin'
     # 监听消息类型

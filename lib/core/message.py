@@ -94,6 +94,17 @@ class Message:
             self,
             parameter: dict
     ) -> None:
+        """
+        中文:
+        构建适配器层面通用消息实例。
+        :param parameter: 传入通用消息参数(dict)。
+        :return: None.
+
+        English:
+        Build a common message instance at the adapter level.
+        :param parameter: Pass in common message parameters(dict).
+        :return: None.
+        """
         [setattr(self, _key, _info) for _key, _info in parameter.items()]
 
     # 初始化消息实例
@@ -102,6 +113,17 @@ class Message:
             self,
             parameter
     ) -> None:
+        """
+        完成特性参数传入，构建完整消息实例。
+        中文:
+        :param parameter: 传入特性参数(dict)。
+        :return: None.
+
+        English:
+        Finish the feature parameter pass and build a complete message instance.
+        :param parameter: Pass in feature parameters(dict).
+        :return: None.
+        """
         [setattr(self, _key, _value) for _key, _value in parameter.items()]
         if self.group and (not self.guild):
             self.isGroup = True
@@ -116,6 +138,17 @@ class Message:
             self,
             msg: object
     ) -> bool:
+        """
+        中文:
+        回复消息示例方法
+        :param msg: 消息实例。
+        :return: 是否成功发送消息(bool)。
+
+        English:
+        Reply message example method
+        :param msg: Message instance.
+        :return: Whether the message was sent successfully(bool).
+        """
         return True
 
 

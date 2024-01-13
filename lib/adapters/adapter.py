@@ -12,6 +12,87 @@ from ..core.message import Message as message
 # Instance Adapter
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
 class Adapter:
+    """
+    中文:
+    适配器基类
+
+    属性:
+        name: 适配器名称
+        client: 适配器实例
+        version: 适配器版本
+        id: 适配器 id
+        bot: bot 实例
+        cfg: 适配器配置
+        log: 日志实例
+        basemessage: 消息实例
+
+    方法:
+        load: 导入适配器
+        load_on: 类继承写法下导入类实例
+        pickUser: 获取 User 实例
+        pickGroup: 获取 Group 实例
+        pickChannel: 获取 Channel 实例
+        pickGuild: 获取 Guild 实例
+        get_user_list: 获取用户列表
+        get_group_list: 获取群列表
+        get_channel_list: 获取频道列表
+        get_guild_list: 获取服务器列表
+        update_user_list: 更新用户列表
+        update_group_list: 更新群列表
+        update_channel_list: 更新频道列表
+        update_guild_list: 更新服务器列表
+        reply: 必须方法，用于调用进行消息发送
+        isFriend: 判断是否为好友
+        run: 具体消息接收逻辑后调用deal进行消息处理(简单示例)
+
+    私有方法:
+        _recv_msg: 接收消息的逻辑示例
+        _deal: 进行消息格式转换等
+        _send: 发送消息的逻辑示例
+        _send_user: 发送消息给用户
+        _send_group: 发送消息给群
+        _send_channel: 发送消息给频道
+
+    English:
+    Instance Adapter
+
+    Attribute:
+        name: Adapter name
+        client: Adapter instance
+        version: Adapter version
+        id: Adapter id
+        bot: Bot instance
+        cfg: Adapter config
+        log: Log instance
+        basemessage: Message instance
+
+    Method:
+        load: Loading Adapter
+        load_on: Load class instance under class inheritance method
+        pickUser: Get user instance
+        pickGroup: Get Group instance
+        pickChannel: Get channel instance
+        pickGuild: Get guild instance
+        get_user_list: Get user list
+        get_group_list: Get group list
+        get_channel_list: Get channel list
+        get_guild_list: Get guild list
+        update_user_list: Update user list
+        update_group_list: Update group list
+        update_channel_list: Update channel list
+        update_guild_list: Update guild list
+        reply: Must method, used to call for message sending
+        isFriend: Determine whether it is a friend
+        run: Example for receiving message
+
+    Private Method:
+        _recv_msg: Example for receiving message
+        _deal: Translate message type
+        _send: Example for sending message
+        _send_user: Send message to user
+        _send_group: Send message to group
+        _send_channel: Send message to channel
+    """
 
     async def _send_user(
             self,
@@ -238,8 +319,10 @@ class Adapter:
             "time": _message.get('time'),
             'reply': self.reply
         })
-
-        await self.bot.deal(e)
+        try:
+            await self.bot.deal(e)
+        except SystemExit:
+            exit()
 
     async def _send(
             self,
@@ -268,4 +351,7 @@ class Adapter:
         while True:
             msg = await self._recv_msg()
 
-            _ = asyncio.create_task(self._deal(msg))
+            try:
+                _ = asyncio.create_task(self._deal(msg))
+            except SystemExit:
+                exit()

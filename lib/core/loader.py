@@ -50,7 +50,10 @@ class Loader:
 
         self.bot.loop = (asyncio.create_task(_Adapter.run()) for _, _Adapter in self.adapters.items())
 
-        await asyncio.gather(
-            *self.bot.loop,
-            return_exceptions=True
-        )
+        try:
+            await asyncio.gather(
+                *self.bot.loop,
+                return_exceptions=True
+            )
+        except SystemExit:
+            exit()

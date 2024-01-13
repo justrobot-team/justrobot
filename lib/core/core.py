@@ -1,5 +1,4 @@
 import asyncio
-import os
 
 from typing import Union
 
@@ -181,16 +180,17 @@ class Core:
     代表机器人的核心功能。
 
     属性:
+        lang: 机器人使用的语言。
         uin (字典): 用于存储用户ID及其对应信息的字典。
-        client (字典): 用于存储客户端ID及其对应信息的字典。
+        client (字典): 用于存储适配器 ID 及其对应功能实例的字典。
         log: 用于记录消息的日志对象。
         loop: 用于异步操作的事件循环。
         adapter_name_list (列表): 适配器名称的列表。
         translator_name_list (列表): 翻译器名称的列表。
         plugin_name_list (列表): 插件名称的列表。
-    
+
     私有属性:
-        _config: 配置对象。 lang: 机器人使用的语言。
+        _config: 配置对象。
         _translators: 翻译器对象。
         _plugins: 插件对象。
         _msg_recv (整数): 接收到的消息数量。
@@ -235,8 +235,9 @@ class Core:
     Represents the core functionality of the bot.
     
     Args:
+        lang: The language used by the bot.
         uin (dict): The dictionary for storing user IDs and their corresponding information.
-        client (dict): The dictionary for storing client IDs and their corresponding information.
+        client (dict): The dictionary for storing adapter IDs and their corresponding functional instances.
         log: The logging object used for logging messages.
         loop: The event loop for asynchronous operations.
         adapter_name_list (list): The list of adapter names.
@@ -316,8 +317,6 @@ class Core:
         self.lang = cfg['language']
         self._translators = None
         self._plugins = None
-        self._msg_recv = 0
-        self._msg_send = 0
 
         self._user_list = []
         self._group_list = []
@@ -396,14 +395,8 @@ class Core:
                     'zh': '[Bot] 关机中...',
                     'en': '[Bot] Shutting down...'
                 })
-                _ = asyncio.ensure_future(self._shutdown())
-                await asyncio.sleep(10)
-                await self.log.info({
-                    'zh': '[Bot] 关机超时，尝试强行终止进程',
-                    'en': '[Bot] Shutdown timeout, try to force terminate the process'
-                })
-                # noinspection PyProtectedMember
-                os._exit(1)
+                await self._shutdown()
+                exit(0)
             else:
                 await self.log.info({
                     'zh': f'[Bot] {e.adapter} 下 {e.user} 不具有主人权限',
@@ -422,8 +415,8 @@ class Core:
         English:
         Send a cancel signal to all coroutines, wait for them to be cancelled then shut down the bot.
         """
-        [_task.stop() for _task in asyncio.Task.all_tasks(self.loop)]
-        exit(0)
+        [_task.cancel() for _task in list(asyncio.Task.all_tasks())]
+        await asyncio.gather(*asyncio.Task.all_tasks(), return_exceptions=True)
 
     @property
     def msg_recv(self) -> int:
@@ -434,7 +427,7 @@ class Core:
         English:
         Return the number of messages received.
         """
-        return self._msg_recv
+        return sum(_client.msg_recv for _, _client in self.client.items())
 
     @property
     def msg_send(self) -> int:
@@ -445,7 +438,7 @@ class Core:
         English:
         Return the number of messages sent.
         """
-        return self._msg_send
+        return sum(_client.msg_send for _, _client in self.client.items())
 
     def msg_recv_append(self) -> None:
         """
