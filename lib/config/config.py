@@ -7,6 +7,51 @@ from datetime import datetime
 # Define class: load configs
 # noinspection PyMethodMayBeStatic
 class Config:
+    """
+    中文:
+    初始化配置文件
+
+    私有属性:
+        _config_bot_path: Bot 配置文件地址
+        _config_adapter_path: Adapter 配置文件地址
+        _config_translator_path: Translator 配置文件地址
+        _config_plugin_path: Plugin 配置文件地址
+        _config_bot: Bot 默认配置文件
+        _config_adapter: Adapter 默认配置文件
+        _config_translator: Translator 默认配置文件
+        _config_plugin: Plugin 默认配置文件
+
+    方法:
+        read_config: 读取所有配置文件
+        update_config: 更新配置文件
+
+    私有方法:
+        _read_bot_config: 读取 Bot 配置文件
+        _read_config: 读取配置文件
+        _initialize_config: 初始化配置文件
+
+    English:
+    Initialize the configuration file
+
+    Private attributes:
+        _config_bot_path: Bot configuration file address
+        _config_adapter_path: Adapter configuration file address
+        _config_translator_path: Translator configuration file address
+        _config_plugin_path: Plugin configuration file address
+        _config_bot: Bot default configuration file
+        _config_adapter: Adapter default configuration file
+        _config_translator: Translator default configuration file
+        _config_plugin: Plugin default configuration file
+
+    Methods:
+        read_config: Read all configuration files
+        update_config: Update configuration file
+
+    Private methods:
+        _read_bot_config: Read Bot configuration file
+        _read_config: Read configuration file
+        _initialize_config: Initialize configuration file
+    """
 
     def __init__(self) -> None:
         # 配置文件地址
@@ -53,13 +98,14 @@ class Config:
             }
         ]
         self._config_translator = [
-            {'name': '',
-             'use_tree': False,
-             'enable_plugin': [
-                 '',
-                 ''
-             ]
-             }
+            {
+                'name': '',
+                'use_tree': False,
+                'enable_plugin': [
+                    '',
+                    ''
+                ]
+            }
         ]
         self._config_plugin = [
             {

@@ -94,18 +94,24 @@ class Adapter:
         _send_channel: Send message to channel
     """
 
+    # 发送消息给用户
+    # Send message to user
     async def _send_user(
             self,
             _e: object
     ) -> bool:
         return True
 
+    # 发送消息给群
+    # Send message to group
     async def _send_group(
             self,
             _e: object
     ) -> bool:
         return True
 
+    # 发送消息给频道
+    # Send message to channel
     async def _send_channel(
             self,
             _e: object
@@ -191,27 +197,43 @@ class Adapter:
         DefaultGuild.load({})
         return DefaultGuild
 
+    # 获取用户列表
+    # Get user list
     def get_user_list(self) -> list:
         return [[self.name, 'default_user']]
 
+    # 获取群列表
+    # Get group list
     def get_group_list(self) -> list:
         return [[self.name, 'default_group']]
 
+    # 获取频道列表
+    # Get channel list
     def get_channel_list(self) -> list:
         return [[self.name, 'default_guild', 'default_channel']]
 
+    # 获取服务器列表
+    # Get guild list
     def get_guild_list(self) -> list:
         return [[self.name, 'default_guild']]
 
+    # 更新用户列表
+    # Update user list
     async def update_user_list(self) -> None:
         pass
 
+    # 更新群列表
+    # Update group list
     async def update_group_list(self) -> None:
         pass
 
+    # 更新频道列表
+    # Update channel list
     async def update_channel_list(self) -> None:
         pass
 
+    # 更新服务器列表
+    # Update guild list
     async def update_guild_list(self) -> None:
         pass
 
@@ -324,6 +346,8 @@ class Adapter:
         except SystemExit:
             exit()
 
+    # 发送消息的逻辑示例
+    # Example for sending message
     async def _send(
             self,
             _e: object
@@ -332,12 +356,15 @@ class Adapter:
         return True
 
     # 必须方法，用于调用进行消息发送
+    # Must method, used to call for message sending
     async def reply(
             self,
             _e: object
     ) -> bool:
         return await self._send(_e)
 
+    # 判断是否为好友
+    # Determine whether it is a friend
     def isFriend(
             self,
             user: str
@@ -345,9 +372,10 @@ class Adapter:
         return False
 
     # 具体消息接收逻辑后调用deal进行消息处理(简单示例)
+    # Example for receiving message(Basic example)
     async def run(self) -> None:
         # 简单示例
-        # Simple example
+        # Basic example
         while True:
             msg = await self._recv_msg()
 
