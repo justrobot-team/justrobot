@@ -26,7 +26,6 @@
     - [ ] Discord Bot openAPI
     - [ ] Onebot v11 API
     - [ ] Telegram Bot openAPI
-    - [ ] mysVilla Bot openAPI
     - [ ] Minecraft RCON API
     - [ ] ...
 - [ ] 添加使用 rust 等重写核心实现的 LTS 版本
