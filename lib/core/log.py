@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import Union, Dict
+from typing import Dict, Union
 
 
 # 打印日志

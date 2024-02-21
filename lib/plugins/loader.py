@@ -5,16 +5,66 @@ from collections import OrderedDict
 
 
 class Plugin:
+    """
+    中文:
+    插件载入器。
+    属性:
+        _plugin_path: 插件路径。
+        _plugins_path: 插件路径列表。
+        plugins: 插件实例字典。
+        cfg: 配置信息。
+        log: 日志实例。
+        lang: 语言。
 
-    def __init__(self, cfg) -> None:
+    方法:
+        _get_dir_list: 获取插件目录列表。
+        _load_plugin: 加载插件。
+        _plugin_array: 插件排序。
+        load: 插件载入。
+
+    English:
+    Plugin loader.
+    Attributes:
+        _plugin_path: Plugin path.
+        _plugins_path: Plugin path list.
+        plugins: Plugin instance dictionary.
+        cfg: Configuration information.
+        log: Log instance.
+        lang: Language.
+
+    Method:
+        _get_dir_list: Get the list of plugin directories.
+        _load_plugin: Load the plugin.
+        _plugin_array: Plugin sorting.
+        load: Plugin loading.
+    """
+
+    def __init__(
+            self,
+            cfg: dict
+    ) -> None:
+        """
+        中文:
+        初始化。
+        :param cfg: 配置信息。
+        :return: None。
+
+        English:
+        Initialization.
+        :param cfg: Configuration information.
+        :return: None.
+        """
+
         self._plugin_path = './plugins'
         self._plugins_path = []
-        self.plugins = {}
+        self.plugins = { }
         self.cfg = cfg
         self.log = None
         self.lang = None
 
-    def _get_dir_list(self) -> None:
+    def _get_dir_list(
+            self
+    ) -> None:
 
         try:
             _paths = os.listdir(self._plugin_path)
@@ -28,7 +78,7 @@ class Plugin:
 
     async def _load_plugin(
             self,
-            path
+            path: str
     ) -> None:
 
         _load_success_log = {
@@ -67,10 +117,15 @@ class Plugin:
                 else:
                     await self.log.error(_line)
 
-    def _plugin_array(self) -> None:
-        _list = [{'name': _name, 'plugin': _plugin} for _name, _plugin in self.plugins.items()]
+    def _plugin_array(
+            self
+    ) -> None:
+        _list = [{ 'name': _name, 'plugin': _plugin } for _name, _plugin in self.plugins.items()]
 
-        _list = sorted(_list, key=lambda _instance: _instance['plugin'].pri)
+        _list = sorted(
+            _list, key=lambda
+                _instance: _instance['plugin'].pri
+        )
 
         _new_plugin = OrderedDict((_dict['name'], _dict['plugin']) for _dict in _list)
 
@@ -78,15 +133,24 @@ class Plugin:
 
     async def load(
             self,
-            bot
+            bot: object
     ) -> dict:
+        """
+        中文:
+        :param bot: 机器人实例。
+        :return: 插件实例字典。
+
+        English:
+        :param bot: Bot instance.
+        :return: Plugin instance dictionary.
+        """
 
         self.log = bot.log
         self.lang = bot.lang
         self._get_dir_list()
 
         if not self._plugins_path:
-            return {}
+            return { }
 
         await asyncio.gather(*(self._load_plugin(_path) for _path in self._plugins_path))
 

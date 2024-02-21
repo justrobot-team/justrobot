@@ -6,15 +6,20 @@ from collections import OrderedDict
 
 class Translator:
 
-    def __init__(self, cfg) -> None:
+    def __init__(
+            self,
+            cfg: dict
+    ) -> None:
         self._translator_path = './translators'
         self._translators_path = []
-        self.translators = {}
+        self.translators = { }
         self.cfg = cfg
         self.log = None
         self.lang = None
 
-    def _get_dir_list(self) -> None:
+    def _get_dir_list(
+            self
+            ) -> None:
 
         try:
             _paths = os.listdir(self._translator_path)
@@ -28,7 +33,7 @@ class Translator:
 
     async def _load_translator(
             self,
-            path
+            path: str
     ) -> None:
 
         _load_success_log = {
@@ -67,10 +72,15 @@ class Translator:
                 else:
                     await self.log.error(_line)
 
-    def _translator_array(self) -> None:
-        _list = [{'name': _name, 'translator': _translator} for _name, _translator in self.translators.items()]
+    def _translator_array(
+            self
+            ) -> None:
+        _list = [{ 'name': _name, 'translator': _translator } for _name, _translator in self.translators.items()]
 
-        _list = sorted(_list, key=lambda _instance: _instance['translator'].pri)
+        _list = sorted(
+            _list, key=lambda
+                _instance: _instance['translator'].pri
+            )
 
         _new_translator = OrderedDict((_dict['name'], _dict['translator']) for _dict in _list)
 
@@ -78,7 +88,7 @@ class Translator:
 
     async def load(
             self,
-            bot
+            bot: object
     ) -> dict:
 
         self.log = bot.log
@@ -86,7 +96,7 @@ class Translator:
         self._get_dir_list()
 
         if not self._translators_path:
-            return {}
+            return { }
 
         await asyncio.gather(*(self._load_translator(_path) for _path in self._translators_path))
 

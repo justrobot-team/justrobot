@@ -1,5 +1,6 @@
 import asyncio
 import time
+import sys
 from datetime import datetime
 from lib.adapters.adapter import Adapter as Default
 from lib.adapters.adapter import User

@@ -48,7 +48,7 @@ class Loader:
 
     def __init__(
             self,
-            cfg
+            cfg: dict
     ) -> None:
         """
         中文:
@@ -66,13 +66,13 @@ class Loader:
         self._plugin = Plugin(cfg["plugin"])
         self.bot = None
         self.cfg = cfg
-        self.adapters = {}
-        self.translators = {}
-        self.plugins = {}
+        self.adapters: dict = { }
+        self.translators: dict = { }
+        self.plugins: dict = { }
 
     async def load(
             self,
-            bot
+            bot: object
     ) -> tuple:
         """
         中文:
@@ -99,7 +99,9 @@ class Loader:
 
         return self.translators, self.plugins
 
-    async def run(self) -> None:
+    async def run(
+            self
+    ) -> None:
         """
         中文:
         启动适配器。
@@ -110,10 +112,12 @@ class Loader:
         :return: None.
         """
         if not self.adapters:
-            await self.bot.log.info({
-                'zh': '[Bot] 未检测到可用适配器',
-                'en': '[Bot] No adapter detected'
-            })
+            await self.bot.log.info(
+                {
+                    'zh': '[Bot] 未检测到可用适配器',
+                    'en': '[Bot] No adapter detected'
+                }
+            )
             input('')
         for _, _adapter in self.adapters.items():
             await _adapter.load(self.bot, self.cfg['adapter'])

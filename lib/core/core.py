@@ -26,7 +26,11 @@ class Translator:
         deal: Deal message.
     """
 
-    def __init__(self, translators: dict, bot: object) -> None:
+    def __init__(
+            self,
+            translators: dict,
+            bot: object
+            ) -> None:
         """
         中文:
         初始化 Translator 类。
@@ -46,7 +50,10 @@ class Translator:
         self.translators = translators
         self.bot = bot
 
-    async def deal(self, e) -> None:
+    async def deal(
+            self,
+            e
+            ) -> None:
         """
         中文:
         匹配并处理消息。
@@ -93,7 +100,11 @@ class Plugin:
         deal: Deal message.
     """
 
-    def __init__(self, plugins: dict, bot: object) -> None:
+    def __init__(
+            self,
+            plugins: dict,
+            bot: object
+            ) -> None:
         """
         中文:
         初始化 Plugin 类。
@@ -112,7 +123,10 @@ class Plugin:
         self.plugins = plugins
         self.bot = bot
 
-    async def deal(self, e) -> None:
+    async def deal(
+            self,
+            e
+            ) -> None:
         """
         中文:
         匹配并处理消息。
@@ -129,8 +143,9 @@ class Plugin:
         for _, _plugin in self.plugins.items():
 
             if hasattr(e, 'translator'):
-                msg_allow_deal = ((e.adapter in _plugin.tree['adapter']) and (
-                        e.translators in _plugin.tree['translator'])) if _plugin.use_tree else True
+                msg_allow_deal = (
+                        (e.adapter in _plugin.tree['adapter']) and (e.translators in _plugin.tree['translator'])
+                ) if _plugin.use_tree else True
             else:
                 msg_allow_deal = (e.adapter in _plugin.tree['adapter']) if _plugin.use_tree else True
 
@@ -143,10 +158,12 @@ class Plugin:
 
                 except AttributeError:
 
-                    self.bot.log.error({
-                        'zh': f'[{_plugin.name}] 未找到对应方法，跳过处理',
-                        'en': f'[{_plugin.name}] Skipped as no corresponding method'
-                    })
+                    self.bot.log.error(
+                        {
+                            'zh': f'[{_plugin.name}] 未找到对应方法，跳过处理',
+                            'en': f'[{_plugin.name}] Skipped as no corresponding method'
+                        }
+                    )
 
 
 # 机器人实例
@@ -265,7 +282,11 @@ class Core:
         _set_guild_list: Add Guild ID to the corresponding list.
     """
 
-    def __init__(self, log: object, cfg: dict, ) -> None:
+    def __init__(
+            self,
+            log: object,
+            cfg: dict
+    ) -> None:
         """
         中文:
         初始化 Core 类。
@@ -279,8 +300,8 @@ class Core:
         :param log: The logging object used for logging messages.
         :param cfg: The dictionary containing configuration information.
         """
-        self.uin = {}
-        self.client = {}
+        self.uin = { }
+        self.client = { }
         self.log = log
         self.loop = None
         self.adapter_name_list = []
@@ -300,7 +321,10 @@ class Core:
         self._channel_list = []
         self._guild_list = []
 
-    def load(self, instances) -> None:
+    def load(
+            self,
+            instances
+    ) -> None:
         """
         中文:
         载入导入成功的翻译器和插件。
@@ -317,7 +341,11 @@ class Core:
         self._translators = Translator(translators=instances['translators'], bot=self)
         self._plugins = Plugin(plugins=instances['plugins'], bot=self)
 
-    def append(self, _id, _client) -> None:
+    def append(
+            self,
+            _id,
+            _client
+    ) -> None:
         """
         中文:
         适配器注册到机器人。
@@ -336,7 +364,10 @@ class Core:
         self.uin[_id['id']] = _id
         self.client[_id['id']] = _client
 
-    async def deal(self, e) -> None:
+    async def deal(
+            self,
+            e
+    ) -> None:
         """
         中文:
         匹配并处理消息。
@@ -352,22 +383,28 @@ class Core:
         """
         if e.msg in ['/关机', '/shutdown']:
             if self.isMaster(e.adapter, e.user.id):
-                await self.log.info({
-                    'zh': '[Bot] 关机中...', 'en': '[Bot] Shutting down...'
-                })
+                await self.log.info(
+                    {
+                        'zh': '[Bot] 关机中...', 'en': '[Bot] Shutting down...'
+                    }
+                )
                 await self._shutdown()
                 exit(0)
             else:
-                await self.log.info({
-                    'zh': f'[Bot] {e.adapter} 下 {e.user} 不具有主人权限',
-                    'en': f'[Bot] {e.user} under {e.adapter} does not have master permission'
-                })
+                await self.log.info(
+                    {
+                        'zh': f'[Bot] {e.adapter} 下 {e.user} 不具有主人权限',
+                        'en': f'[Bot] {e.user} under {e.adapter} does not have master permission'
+                    }
+                )
         if self.translator_name_list:
             await self._translators.deal(e)
         if self.plugin_name_list:
             await self._plugins.deal(e)
 
-    async def _shutdown(self) -> None:
+    async def _shutdown(
+            self
+            ) -> None:
         """
         中文:
         向全部协程发送取消信号，等待其全部取消后关闭机器人。
@@ -379,7 +416,9 @@ class Core:
         await asyncio.gather(*asyncio.Task.all_tasks(), return_exceptions=True)
 
     @property
-    def msg_recv(self) -> int:
+    def msg_recv(
+            self
+            ) -> int:
         """
         中文:
         返回接收到的消息数量。
@@ -390,7 +429,9 @@ class Core:
         return sum(_client.msg_recv for _, _client in self.client.items())
 
     @property
-    def msg_send(self) -> int:
+    def msg_send(
+            self
+            ) -> int:
         """
         中文:
         返回发送的消息数量。
@@ -400,7 +441,9 @@ class Core:
         """
         return sum(_client.msg_send for _, _client in self.client.items())
 
-    def msg_recv_append(self) -> None:
+    def msg_recv_append(
+            self
+            ) -> None:
         """
         中文:
         接收到的消息数量加一。
@@ -410,7 +453,9 @@ class Core:
         """
         self._msg_recv += 1
 
-    def msg_send_append(self) -> None:
+    def msg_send_append(
+            self
+            ) -> None:
         """
         中文:
         发送的消息数量加一。
@@ -420,7 +465,11 @@ class Core:
         """
         self._msg_send += 1
 
-    def isMaster(self, adapter_name, user) -> bool:
+    def isMaster(
+            self,
+            adapter_name,
+            user
+    ) -> bool:
         """
         中文:
         判断用户是否为主人。
@@ -439,13 +488,19 @@ class Core:
         try:
             return user in self._config['master'][adapter_name]
         except KeyError:
-            asyncio.create_task(self.log.error({
-                'zh': f'[Bot] {adapter_name} 不存在或未设置主人',
-                'en': f'[Bot] {adapter_name} does not exist or master not set'
-            }))
+            asyncio.create_task(
+                self.log.error(
+                    {
+                        'zh': f'[Bot] {adapter_name} 不存在或未设置主人',
+                        'en': f'[Bot] {adapter_name} does not exist or master not set'
+                    }
+                )
+            )
             return False
 
-    def get_user_list(self) -> list:
+    def get_user_list(
+            self
+            ) -> list:
         """
         中文:
         返回 User ID 的列表。
@@ -459,7 +514,9 @@ class Core:
         """
         return self._user_list
 
-    def get_group_list(self) -> list:
+    def get_group_list(
+            self
+            ) -> list:
         """
         中文:
         返回 Group ID 的列表。
@@ -473,7 +530,9 @@ class Core:
         """
         return self._group_list
 
-    def get_channel_list(self) -> list:
+    def get_channel_list(
+            self
+            ) -> list:
         """
         中文:
         返回 Channel ID 的列表。
@@ -487,7 +546,9 @@ class Core:
         """
         return self._channel_list
 
-    def get_guild_list(self) -> list:
+    def get_guild_list(
+            self
+            ) -> list:
         """
         中文:
         返回 Guild ID 的列表。
@@ -501,8 +562,25 @@ class Core:
         """
         return self._guild_list
 
-    def pickUser(self, uid: str, adapter_name: str = None) -> Union[object, list]:
+    def pickUser(
+            self,
+            uid: str,
+            adapter_name: str = None
+    ) -> Union[object, list]:
+        """
+        中文:
+        获取用户对象，当传入适配器名称时返回单个实例，为传入时返回存有所有匹配结果的列表。
+        :param uid: 用户 ID。
+        :param adapter_name: 适配器名称。
+        :return: 用户对象。
 
+        English:
+        Get the user object, return a single instance when the adapter name is passed in,
+        and return a list containing all matching results when it is not passed in.
+        :param uid: User ID.
+        :param adapter_name: The adapter name.
+        :return: The user object.
+        """
         if adapter_name:
             _user_list = self.client[adapter_name].get_user_list()
             _user = self.client[adapter_name].pickUser(uid) if uid in _user_list else None
@@ -510,15 +588,35 @@ class Core:
             _user = [self.client[_id[0]].pickUser(_id[0]) for _id in self._user_list if _id[1] == uid]
 
         if not _user:
-            self.log.warn({
-                'zh': f'[Bot]未查找到用户{uid}', 'en': f'[Bot]User {uid} not found'
-            })
+            self.log.warn(
+                {
+                    'zh': f'[Bot]未查找到用户{uid}',
+                    'en': f'[Bot]User {uid} not found'
+                }
+            )
             return []
 
         return _user
 
-    def pickGroup(self, grid: str, adapter_name: str = None) -> Union[object, list]:
+    def pickGroup(
+            self,
+            grid: str,
+            adapter_name: str = None
+    ) -> Union[object, list]:
+        """
+        中文:
+        获取群组对象，当传入适配器名称时返回单个实例，为传入时返回存有所有匹配结果的列表。
+        :param grid: 群组 ID。
+        :param adapter_name: 适配器名称。
+        :return: 群组对象。
 
+        English:
+        Get the group object, return a single instance when the adapter name is passed in,
+        and return a list containing all matching results when it is not passed in.
+        :param grid: Group ID.
+        :param adapter_name: The adapter name.
+        :return: The group object.
+        """
         if adapter_name:
             _group_list = self.client[adapter_name].get_group_list()
             _group = self.client[adapter_name].pickGroup(grid) if grid in _group_list else None
@@ -526,32 +624,76 @@ class Core:
             _group = [self.client[_id[0]].pickGroup(_id[0]) for _id in self._group_list if _id[1] == grid]
 
         if not _group:
-            self.log.warn({
-                'zh': f'[Bot]未查找到群聊{grid}', 'en': f'[Bot]Group {grid} not found'
-            })
+            self.log.warn(
+                {
+                    'zh': f'[Bot]未查找到群聊{grid}',
+                    'en': f'[Bot]Group {grid} not found'
+                }
+            )
             return []
 
         return _group
 
-    def pickChannel(self, cid: str, guid: str, adapter_name: str = None) -> Union[object, list]:
+    def pickChannel(
+            self,
+            cid: str,
+            guid: str,
+            adapter_name: str = None
+    ) -> Union[object, list]:
+        """
+        中文:
+        获取频道对象，当传入适配器名称时返回单个实例，为传入时返回存有所有匹配结果的列表。
+        :param cid: 频道 ID。
+        :param guid: 公会 ID。
+        :param adapter_name: 适配器名称。
+        :return: 频道对象。
 
+        English:
+        Get the channel object, return a single instance when the adapter name is passed in,
+        and return a list containing all matching results when it is not passed in.
+        :param cid: Channel ID.
+        :param guid: Guild ID.
+        :param adapter_name: The adapter name.
+        :return: The channel object.
+        """
         if adapter_name:
             _channel_list = self.client[adapter_name].get_channel_list(guid)
             _channel = self.client[adapter_name].pickChannel(cid, guid) if cid in _channel_list else None
         else:
-            _channel = [self.client[_id[0]].pickChannel(_id[0]) for _id in self._channel_list if
-                        [_id[1], _id[2]] == [guid, cid]]
+            _channel = [
+                self.client[_id[0]].pickChannel(_id[0]) for _id in self._channel_list if [_id[1], _id[2]] == [guid, cid]
+            ]
 
         if not _channel:
-            self.log.warn({
-                'zh': f'[Bot]未查找到子频道{cid}在服务器{guid}', 'en': f'[Bot]Channel {cid} not found in guild {guid}'
-            })
+            self.log.warn(
+                {
+                    'zh': f'[Bot]未查找到子频道{cid}在服务器{guid}',
+                    'en': f'[Bot]Channel {cid} not found in guild {guid}'
+                }
+            )
             return []
 
         return _channel
 
-    def pickGuild(self, guid: str, adapter_name: str = None) -> Union[object, list]:
+    def pickGuild(
+            self,
+            guid: str,
+            adapter_name: str = None
+    ) -> Union[object, list]:
+        """
+        中文:
+        获取公会对象，当传入适配器名称时返回单个实例，为传入时返回存有所有匹配结果的列表。
+        :param guid: 公会 ID。
+        :param adapter_name: 适配器名称。
+        :return: 公会对象。
 
+        English:
+        Get the guild object, return a single instance when the adapter name is passed in,
+        and return a list containing all matching results when it is not passed in.
+        :param guid: Guild ID.
+        :param adapter_name: The adapter name.
+        :return: The guild object.
+        """
         if adapter_name:
             _guild_list = self.client[adapter_name].get_guild_list()
             _guild = self.client[adapter_name].pickGuild(guid) if guid in _guild_list else None
@@ -559,235 +701,529 @@ class Core:
             _guild = [self.client[_id[0]].pickUser(_id[0]) for _id in self._guild_list if _id[1] == guid]
 
         if not _guild:
-            self.log.warn({
-                'zh': f'[Bot]未查找到服务器{guid}', 'en': f'[Bot]Guild {guid} not found'
-            })
+            self.log.warn(
+                {
+                    'zh': f'[Bot]未查找到服务器{guid}', 'en': f'[Bot]Guild {guid} not found'
+                }
+            )
             return []
 
         return _guild
 
-    def _set_user_list(self, uid) -> None:
+    def _set_user_list(
+            self,
+            uid
+    ) -> None:
         self._user_list.append(uid)
 
-    async def set_user_list(self, uid: Union[list, str], adapter_name: str = None) -> bool:
+    async def set_user_list(
+            self,
+            uid: Union[list, str],
+            adapter_name: str = None
+    ) -> bool:
+        """
+        中文:
+        添加用户ID到列表。
+        :param uid: 用户 ID。
+        :param adapter_name: 适配器名称。
+        :return: bool: 是否添加成功。
 
-        async def _error(_message) -> bool:
-            await self.log.error({
-                'zh': f'[Bot] {_message[0]}', 'en': f'[Bot] {_message[1]}'
-            })
+        English:
+        Add user ID to list.
+        :param uid: User ID.
+        :param adapter_name: The adapter name.
+        :return: bool: Whether the addition was successful.
+        """
+
+        async def _error(
+                _message
+                ) -> bool:
+            await self.log.error(
+                {
+                    'zh': f'[Bot] {_message[0]}', 'en': f'[Bot] {_message[1]}'
+                }
+            )
             return False
 
         if isinstance(uid, list):
             if not len(uid) == 2:
-                return await _error([f'uid 长度不符合要求: {len(uid)} 不是合法的 uid 长度',
-                                     f'uid length does not meet the requirements: {len(uid)} is not a valid uid length'])
+                return await _error(
+                    [
+                        f'uid 长度不符合要求: {len(uid)} 不是合法的 uid 长度',
+                        f'uid length does not meet the requirements: {len(uid)} is not a valid uid length'
+                    ]
+                )
 
-            if uid[0] not in self.adapter_name_list:
-                return await _error([f'适配器不存在或类型错误: {uid[0]}: {type(uid[0])}',
-                                     f'Adapter does not exist or type error: {uid[0]}: {type(uid[0])}'])
+            if not (uid[0] in self.adapter_name_list):
+                return await _error(
+                    [
+                        f'适配器不存在或类型错误: {uid[0]}: {type(uid[0])}',
+                        f'Adapter does not exist or type error: {uid[0]}: {type(uid[0])}'
+                    ]
+                )
 
             if not isinstance(uid[1], str):
-                return await _error([f'错误的用户 id 类型: {type(uid[1])}', f'Incorrect user id type: {type(uid[1])}'])
+                return await _error(
+                    [
+                        f'错误的用户 id 类型: {type(uid[1])}',
+                        f'Incorrect user id type: {type(uid[1])}'
+                    ]
+                )
 
         elif isinstance(uid, (str, int, float)):
             if not adapter_name:
-                return await _error(['缺少参数: adapter_name', 'Missing parameter: adapter_name'])
+                return await _error(
+                    [
+                        '缺少参数: adapter_name',
+                        'Missing parameter: adapter_name'
+                    ]
+                )
 
             uid = [adapter_name, str(uid)]
 
         else:
-            return await _error([f'uid 类型错误: {type(uid)} 不是 list, str, int, float',
-                                 f'uid type error: {type(uid)} is not list, str, int, float'])
+            return await _error(
+                [
+                    f'uid 类型错误: {type(uid)} 不是 list, str, int, float',
+                    f'uid type error: {type(uid)} is not list, str, int, float'
+                ]
+            )
 
         if uid in self._user_list:
-            return await _error([f'不能重复添加用户 {uid[1]}', f'Cannot add user {uid[1]} repeatedly'])
+            return await _error(
+                [
+                    f'不能重复添加用户 {uid[1]}',
+                    f'Cannot add user {uid[1]} repeatedly'
+                ]
+            )
 
         self._set_user_list(uid)
         return True
 
-    def _set_group_list(self, grid) -> None:
+    def _set_group_list(
+            self,
+            grid
+    ) -> None:
         self._group_list.append(grid)
 
-    async def set_group_list(self, grid: Union[list, str], adapter_name: str = None) -> bool:
+    async def set_group_list(
+            self,
+            grid: Union[list, str],
+            adapter_name: str = None
+    ) -> bool:
+        """
+        中文:
+        添加群聊 ID 到列表。
+        :param grid: 群聊 ID。
+        :param adapter_name: 适配器名称。
+        :return: bool: 是否添加成功。
 
-        async def _error(_message) -> bool:
-            await self.log.error({
-                'zh': f'[Bot] {_message[0]}', 'en': f'[Bot] {_message[1]}'
-            })
+        English:
+        Add group ID to list.
+        :param grid: Group ID.
+        :param adapter_name: The adapter name.
+        :return: bool: Whether the addition was successful.
+        """
+
+        async def _error(
+                _message
+                ) -> bool:
+            await self.log.error(
+                {
+                    'zh': f'[Bot] {_message[0]}',
+                    'en': f'[Bot] {_message[1]}'
+                }
+            )
             return False
 
         if isinstance(grid, list):
             if not len(grid) == 2:
-                return await _error([f'grid 长度不符合要求: {len(grid)} 不是合法的 grid 长度',
-                                     f'grid length does not meet the requirements: {len(grid)} is not a valid grid length'])
+                return await _error(
+                    [
+                        f'grid 长度不符合要求: {len(grid)} 不是合法的 grid 长度',
+                        f'grid length does not meet the requirements: {len(grid)} is not a valid grid length'
+                    ]
+                )
 
             if grid[0] not in self.adapter_name_list:
-                return await _error([f'适配器不存在或类型错误: {grid[0]}: {type(grid[0])}',
-                                     f'Adapter does not exist or type error: {grid[0]}: {type(grid[0])}'])
+                return await _error(
+                    [
+                        f'适配器不存在或类型错误: {grid[0]}: {type(grid[0])}',
+                        f'Adapter does not exist or type error: {grid[0]}: {type(grid[0])}'
+                    ]
+                )
 
             if not isinstance(grid[1], str):
                 return await _error(
-                    [f'错误的群聊 id 类型: {type(grid[1])}', f'Incorrect group id type: {type(grid[1])}'])
+                    [
+                        f'错误的群聊 id 类型: {type(grid[1])}',
+                        f'Incorrect group id type: {type(grid[1])}'
+                    ]
+                )
 
         elif isinstance(grid, (str, int, float)):
             if not adapter_name:
-                return await _error(['缺少参数: adapter_name', 'Missing parameter: adapter_name'])
+                return await _error(
+                    [
+                        '缺少参数: adapter_name',
+                        'Missing parameter: adapter_name'
+                    ]
+                )
 
             grid = [adapter_name, grid]
 
         else:
-            return await _error([f'grid 类型错误: {type(grid)} 不是 list, str, int, float',
-                                 f'grid type error: {type(grid)} is not list, str, int, float'])
+            return await _error(
+                [
+                    f'grid 类型错误: {type(grid)} 不是 list, str, int, float',
+                    f'grid type error: {type(grid)} is not list, str, int, float'
+                ]
+            )
 
         if grid in self._group_list:
-            return await _error([f'不能重复添加群聊 {grid[1]}', f'Cannot add group {grid[1]} repeatedly'])
+            return await _error(
+                [
+                    f'不能重复添加群聊 {grid[1]}',
+                    f'Cannot add group {grid[1]} repeatedly'
+                ]
+            )
 
         self._set_group_list(grid)
         return True
 
-    def _set_channel_list(self, cid) -> None:
+    def _set_channel_list(
+            self,
+            cid
+    ) -> None:
         self._channel_list.append(cid)
 
-    async def set_channel_list(self, cid: Union[list, str], guid: str = None, adapter_name: str = None) -> bool:
+    async def set_channel_list(
+            self,
+            cid: Union[list, str],
+            guid: str = None,
+            adapter_name: str = None
+    ) -> bool:
+        """
+        中文:
+        添加频道 ID 到列表。
+        :param cid: 频道 ID。
+        :param guid: 公会 ID。
+        :param adapter_name: 适配器名称。
+        :return: bool: 是否添加成功。
 
-        async def _error(_message) -> bool:
-            await self.log.error({
-                'zh': f'[Bot] {_message[0]}', 'en': f'[Bot] {_message[1]}'
-            })
+        English:
+        Add channel ID to list.
+        :param cid: Channel ID.
+        :param guid: Guild ID.
+        :param adapter_name: The adapter name.
+        :return: bool: Whether the addition was successful.
+        """
+
+        async def _error(
+                _message
+                ) -> bool:
+            await self.log.error(
+                {
+                    'zh': f'[Bot] {_message[0]}',
+                    'en': f'[Bot] {_message[1]}'
+                }
+            )
             return False
 
         if isinstance(cid, list):
             if not len(cid) == 3:
-                return await _error([f'cid 长度不符合要求: {len(cid)} 不是合法的 cid 长度',
-                                     f'cid length does not meet the requirements: {len(cid)} is not a valid cid length'])
+                return await _error(
+                    [
+                        f'cid 长度不符合要求: {len(cid)} 不是合法的 cid 长度',
+                        f'cid length does not meet the requirements: {len(cid)} is not a valid cid length'
+                    ]
+                )
 
             if cid[0] not in self.adapter_name_list:
                 return await _error(
-                    [f'适配器不存在或类型错误: {cid[0]}', f'Adapter does not exist or type error: {cid[0]}'])
+                    [
+                        f'适配器不存在或类型错误: {cid[0]}',
+                        f'Adapter does not exist or type error: {cid[0]}'
+                    ]
+                )
 
             if [cid[0], cid[1]] not in self._guild_list:
-                return await _error([f'不能向不存在的服务器 {cid[1]} 添加子频道或类型错误',
-                                     f'Cannot add sub-channel or type error to non-existent server {cid[1]}'])
+                return await _error(
+                    [
+                        f'不能向不存在的服务器 {cid[1]} 添加子频道或类型错误',
+                        f'Cannot add sub-channel or type error to non-existent server {cid[1]}'
+                    ]
+                )
 
             if not isinstance(cid[2], str):
                 return await _error(
-                    [f'错误的子频道 id 类型: {type(cid[2])}', f'Incorrect channel id type: {type(cid[2])}'])
+                    [
+                        f'错误的子频道 id 类型: {type(cid[2])}',
+                        f'Incorrect channel id type: {type(cid[2])}'
+                    ]
+                )
 
         elif isinstance(cid, (str, int, float)):
             if not guid:
-                return await _error(['缺少参数: guild_name', 'Missing parameter: guild_name'])
+                return await _error(
+                    [
+                        '缺少参数: guild_name',
+                        'Missing parameter: guild_name'
+                    ]
+                )
 
             if not adapter_name:
-                return await _error(['缺少参数: adapter_name', 'Missing parameter: adapter_name'])
+                return await _error(
+                    [
+                        '缺少参数: adapter_name',
+                        'Missing parameter: adapter_name'
+                    ]
+                )
 
             if not isinstance(guid, (str, int, float)):
-                return await _error([f'guid 类型错误: {type(guid)} 不是 str, int, float',
-                                     f'guid type error: {type(guid)} is not str, int, float'])
+                return await _error(
+                    [
+                        f'guid 类型错误: {type(guid)} 不是 str, int, float',
+                        f'guid type error: {type(guid)} is not str, int, float'
+                    ]
+                )
 
             if not isinstance(adapter_name, str):
-                return await _error([f'adapter_name 类型错误: {type(adapter_name)} 不是 str',
-                                     f'adapter_name type error: {type(adapter_name)} is not str'])
+                return await _error(
+                    [
+                        f'adapter_name 类型错误: {type(adapter_name)} 不是 str',
+                        f'adapter_name type error: {type(adapter_name)} is not str'
+                    ]
+                )
 
             if adapter_name not in self.adapter_name_list:
-                return await _error([f'适配器不存在: {adapter_name}', f'Adapter does not exist: {adapter_name}'])
+                return await _error(
+                    [
+                        f'适配器不存在: {adapter_name}',
+                        f'Adapter does not exist: {adapter_name}'
+                    ]
+                )
 
             if [adapter_name, str(guid)] not in self._guild_list:
-                return await _error([f'不能向不存在的服务器 {cid[1]} 添加子频道',
-                                     f'Cannot add sub-channel to non-existent server {cid[1]}'])
+                return await _error(
+                    [
+                        f'不能向不存在的服务器 {cid[1]} 添加子频道',
+                        f'Cannot add sub-channel to non-existent server {cid[1]}'
+                    ]
+                )
 
             cid = [adapter_name, str(guid), cid]
 
         else:
-            return await _error([f'cid 类型错误: {type(cid)} 不是 list, str, int. float',
-                                 f'cid type error: {type(cid)} is not list, str, int. float'])
+            return await _error(
+                [
+                    f'cid 类型错误: {type(cid)} 不是 list, str, int. float',
+                    f'cid type error: {type(cid)} is not list, str, int. float'
+                ]
+            )
 
         if cid in self._channel_list:
-            return await _error([f'不嫩重复添加子频道 {cid[2]} 到服务器 {cid[1]}',
-                                 f'Cannot add sub-channel {cid[2]} repeatedly to server {cid[1]}'])
+            return await _error(
+                [
+                    f'不嫩重复添加子频道 {cid[2]} 到服务器 {cid[1]}',
+                    f'Cannot add sub-channel {cid[2]} repeatedly to server {cid[1]}'
+                ]
+            )
 
         self._set_channel_list(cid)
         return True
 
-    def _set_guild_list(self, guid) -> None:
+    def _set_guild_list(
+            self,
+            guid
+            ) -> None:
         self._guild_list.append(guid)
 
-    async def set_guild_list(self, guid: Union[list, str], adapter_name: str = None) -> bool:
+    async def set_guild_list(
+            self,
+            guid: Union[list, str],
+            adapter_name: str = None
+    ) -> bool:
+        """
+        中文:
+        添加公会 ID 到列表。
+        :param guid: 公会 ID。
+        :param adapter_name: 适配器名称。
+        :return: bool: 是否添加成功。
 
-        async def _error(_message) -> bool:
-            await self.log.error({
-                'zh': f'[Bot] {_message[0]}', 'en': f'[Bot] {_message[1]}'
-            })
+        English:
+        Add guild ID to list.
+        :param guid: Guild ID.
+        :param adapter_name: The adapter name.
+        :return: bool: Whether the addition was successful.
+        """
+
+        async def _error(
+                _message
+                ) -> bool:
+            await self.log.error(
+                {
+                    'zh': f'[Bot] {_message[0]}',
+                    'en': f'[Bot] {_message[1]}'
+                }
+            )
             return False
 
         if isinstance(guid, list):
             if not len(guid) == 2:
-                return await _error([f'guid 长度不满足要求: {len(guid)} 不是合法的guid长度',
-                                     f'guid length does not meet the requirements: {len(guid)} is not a valid guid length'])
+                return await _error(
+                    [
+                        f'guid 长度不满足要求: {len(guid)} 不是合法的guid长度',
+                        f'guid length does not meet the requirements: {len(guid)} is not a valid guid length'
+                    ]
+                )
 
             if guid[0] not in self.adapter_name_list:
                 return await _error(
-                    [f'适配器不存在或类型错误: {guid[0]}', f'Adapter does not exist or type error: {guid[0]}'])
+                    [
+                        f'适配器不存在或类型错误: {guid[0]}',
+                        f'Adapter does not exist or type error: {guid[0]}'
+                    ]
+                )
 
             if not isinstance(guid[1], str):
                 return await _error(
-                    [f'错误的服务器 id 类型: {type(guid[1])}', f'Incorrect guild id type: {type(guid[1])}'])
+                    [
+                        f'错误的服务器 id 类型: {type(guid[1])}',
+                        f'Incorrect guild id type: {type(guid[1])}'
+                    ]
+                )
 
         elif isinstance(guid, (str, int, float)):
             if not adapter_name:
-                return await _error(['缺少参数: adapter_name', 'Missing parameter: adapter_name'])
+                return await _error(
+                    [
+                        '缺少参数: adapter_name',
+                        'Missing parameter: adapter_name'
+                    ]
+                )
 
             guid = [adapter_name, str(guid)]
 
         else:
-            return await _error([f'错误的 guid 类型: {type(guid)} 不是 list, str, int. float',
-                                 f'Incorrect guid type: {type(guid)} is not list, str, int. float'])
+            return await _error(
+                [
+                    f'错误的 guid 类型: {type(guid)} 不是 list, str, int. float',
+                    f'Incorrect guid type: {type(guid)} is not list, str, int. float'
+                ]
+            )
 
         self._set_guild_list(guid)
         return True
 
-    async def update_all_list(self) -> None:
+    async def update_all_list(
+            self
+            ) -> None:
+        """
+        中文:
+        更新所有列表。
+        :return: None.
 
+        English:
+        Update all lists.
+        :return: None.
+        """
         await self.update_user_list()
         await self.update_group_list()
         await self.update_channel_list()
         await self.update_guild_list()
 
-    async def update_user_list(self) -> None:
+    async def update_user_list(
+            self
+            ) -> None:
+        """
+        中文:
+        更新用户 ID 的列表。
+        :return: None.
+
+        English:
+        Update the list of user IDs.
+        :return: None.
+        """
+
         for _, _client in self.client.items():
             try:
                 await _client.update_user_list()
             except AttributeError:
-                await self.log.error({
-                    'zh': f'[{_client.name}] 未找到方法 update_user_list',
-                    'en': f'[{_client.name}] Method update_user_list not found'
-                })
+                await self.log.error(
+                    {
+                        'zh': f'[{_client.name}] 未找到方法 update_user_list',
+                        'en': f'[{_client.name}] Method update_user_list not found'
+                    }
+                )
 
-    async def update_group_list(self) -> None:
+    async def update_group_list(
+            self
+            ) -> None:
+        """
+        中文:
+        更新群组 ID 的列表。
+        :return: None.
+
+        English:
+        Update the list of group IDs.
+        :return: None.
+        """
+
         for _, _client in self.client.items():
             try:
                 await _client.update_group_list()
             except AttributeError:
-                await self.log.error({
-                    'zh': f'[{_client.name}] 未找到方法 update_group_list',
-                    'en': f'[{_client.name}] Method update_group_list not found'
-                })
+                await self.log.error(
+                    {
+                        'zh': f'[{_client.name}] 未找到方法 update_group_list',
+                        'en': f'[{_client.name}] Method update_group_list not found'
+                    }
+                )
 
-    async def update_channel_list(self) -> None:
+    async def update_channel_list(
+            self
+            ) -> None:
+        """
+        中文:
+        更新频道 ID 的列表。
+        :return: None.
+
+        English:
+        Update the list of channel IDs.
+        :return: None.
+        """
+
         for _, _client in self.client.items():
             try:
                 await _client.update_channel_list()
             except AttributeError:
-                await self.log.error({
-                    'zh': f'[{_client.name}] 未找到方法 update_channel_list',
-                    'en': f'[{_client.name}] Method update_channel_list not found'
-                })
+                await self.log.error(
+                    {
+                        'zh': f'[{_client.name}] 未找到方法 update_channel_list',
+                        'en': f'[{_client.name}] Method update_channel_list not found'
+                    }
+                )
 
-    async def update_guild_list(self) -> None:
+    async def update_guild_list(
+            self
+            ) -> None:
+        """
+        中文:
+        更新公会 ID 的列表。
+        :return: None.
+
+        English:
+        Update the list of guild IDs.
+        :return: None.
+        """
         for _, _client in self.client.items():
             try:
                 await _client.update_guild_list()
             except AttributeError:
-                await self.log.error({
-                    'zh': f'[{_client.name}] 未找到方法 update_guild_list',
-                    'en': f'[{_client.name}] Method update_guild_list not found'
-                })
+                await self.log.error(
+                    {
+                        'zh': f'[{_client.name}] 未找到方法 update_guild_list',
+                        'en': f'[{_client.name}] Method update_guild_list not found'
+                    }
+                )

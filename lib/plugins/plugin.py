@@ -74,14 +74,16 @@ class Plugin:
     log: object
 
     # 初始化
-    def __init__(self) -> None:
+    def __init__(
+            self
+            ) -> None:
         pass
 
     # 插件载入
     def load(
             self,
-            bot,
-            cfg
+            bot: object,
+            cfg: dict
     ) -> None:
         """
         中文:
@@ -100,15 +102,17 @@ class Plugin:
         self.bot = bot
         self.replymessage = ReplyMessage
         self.log = bot.log
-        self.log.info({
-            'zh': f'[{self.name}] 插件已载入',
-            'en': f'[{self.name}] Plugin has been loaded'
-        })
+        self.log.info(
+            {
+                'zh': f'[{self.name}] 插件已载入',
+                'en': f'[{self.name}] Plugin has been loaded'
+            }
+        )
 
     # 消息匹配
     async def matching(
             self,
-            e
+            e: object
     ) -> Union[str, bool]:
         """
         中文:
@@ -131,7 +135,7 @@ class Plugin:
     # 示例函数
     async def example(
             self,
-            e
+            e: object
     ) -> bool:
         """
         中文:

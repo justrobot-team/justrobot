@@ -1,4 +1,4 @@
-from typing import Union, Dict, List
+from typing import Dict, List, Union
 
 
 # noinspection PyMethodMayBeStatic
@@ -235,26 +235,32 @@ class ReplyMessage:
             # 文件类型错误，应当为 bytes 或 list
             # File type error, should be bytes or list
             if file:
-                self.log.warn({
-                    'zh': f'[{self.adapter_name}] 文件类型错误，应当为 bytes 或 list',
-                    'en': f'[{self.adapter_name}] File type error, should be bytes or list'
-                })
+                self.log.warn(
+                    {
+                        'zh': f'[{self.adapter_name}] 文件类型错误，应当为 bytes 或 list',
+                        'en': f'[{self.adapter_name}] File type error, should be bytes or list'
+                    }
+                )
             # 发送消息的同时不能进行操作
             # Cannot operate while sending messages
             if operation:
-                self.log.warn({
-                    'zh': f'[{self.adapter_name}] 发送消息的同时不能进行操作',
-                    'en': f'[{self.adapter_name}] Cannot operate while sending messages'
-                })
+                self.log.warn(
+                    {
+                        'zh': f'[{self.adapter_name}] 发送消息的同时不能进行操作',
+                        'en': f'[{self.adapter_name}] Cannot operate while sending messages'
+                    }
+                )
             return self.e.reply(self)
 
         # 消息类型错误，应当为 str
         # Message type error, should be str
         if msg and (not isinstance(msg, str)):
-            self.log.error({
-                'zh': f'[{self.adapter_name}] 消息类型错误，应当为 str',
-                'en': f'[{self.adapter_name}] Message type error, should be str'
-            })
+            self.log.error(
+                {
+                    'zh': f'[{self.adapter_name}] 消息类型错误，应当为 str',
+                    'en': f'[{self.adapter_name}] Message type error, should be str'
+                }
+            )
             return False
 
         # 发送文件
@@ -266,19 +272,23 @@ class ReplyMessage:
             # 发送文件的同时不能进行操作
             # Cannot operate while sending files
             if operation:
-                self.log.warn({
-                    'zh': f'[{self.adapter_name}] 发送文件的同时不能进行操作',
-                    'en': f'[{self.adapter_name}] Cannot operate while sending files'
-                })
+                self.log.warn(
+                    {
+                        'zh': f'[{self.adapter_name}] 发送文件的同时不能进行操作',
+                        'en': f'[{self.adapter_name}] Cannot operate while sending files'
+                    }
+                )
             return self.e.reply(self)
 
         # 文件类型错误，应当为 bytes 或 list
         # File type error, should be bytes or list
         if file and (not isinstance(file, (bytes, list))):
-            self.log.error({
-                'zh': f'[{self.adapter_name}] 文件类型错误，应当为 bytes 或 list',
-                'en': f'[{self.adapter_name}] File type error, should be bytes or list'
-            })
+            self.log.error(
+                {
+                    'zh': f'[{self.adapter_name}] 文件类型错误，应当为 bytes 或 list',
+                    'en': f'[{self.adapter_name}] File type error, should be bytes or list'
+                }
+            )
             return False
 
         # 进行操作
@@ -287,27 +297,33 @@ class ReplyMessage:
             if operation:
                 self.operation = operation
                 self.notice = 'operation'
-                self.log.warn({
-                    'zh': f'[{self.adapter_name}] 进行操作的同时不能进行回复',
-                    'en': f'[{self.adapter_name}] Cannot operate while replying'
-                }) if quote else None
+                self.log.warn(
+                    {
+                        'zh': f'[{self.adapter_name}] 进行操作的同时不能进行回复',
+                        'en': f'[{self.adapter_name}] Cannot operate while replying'
+                    }
+                ) if quote else None
             if (not operation) and at_sender:
                 self.at_sender = at_sender
                 self.notice = 'at' if not quote else 'quote at'
             # 进行操作的同时不能进行 at
             # Cannot operate while at
             if operation and at_sender:
-                self.log.warn({
-                    'zh': '进行操作的同时不能进行 at',
-                    'en': 'Cannot operate while at'
-                })
+                self.log.warn(
+                    {
+                        'zh': '进行操作的同时不能进行 at',
+                        'en': 'Cannot operate while at'
+                    }
+                )
             # 要发送消息不能为空
             # Message cannot be empty
             if (not operation) and (not at_sender):
-                self.log.error({
-                    'zh': f'[{self.adapter_name}] 要发送消息不能为空',
-                    'en': f'[{self.adapter_name}] Message cannot be empty'
-                })
+                self.log.error(
+                    {
+                        'zh': f'[{self.adapter_name}] 要发送消息不能为空',
+                        'en': f'[{self.adapter_name}] Message cannot be empty'
+                    }
+                )
                 return False
 
             return self.e.reply(self)

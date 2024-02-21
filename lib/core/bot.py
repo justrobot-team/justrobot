@@ -37,7 +37,11 @@ class Bot:
         run: Start the Bot
     """
 
-    def __init__(self) -> None:
+    # 机器人类实例化
+    # Bot class instantiation
+    def __init__(
+            self
+    ) -> None:
         """
         中文:
         初始化 Bot 类。
@@ -53,9 +57,11 @@ class Bot:
         self.plugins = None
         self.bot = None
 
+    # 加载插件和适配器
+    # Load plugins and adapters
     def load(
             self,
-            cfg
+            cfg: dict
     ) -> None:
         """
         中文:
@@ -69,14 +75,20 @@ class Bot:
         :return: None.
         """
         self._loader = Loader(cfg)
-        self.log = Log({
-            'level': cfg['bot']['log_level'],
-            'lang': cfg['bot']['language']
-        })
-        asyncio.run(self.log.info({
-            'zh': ' -------- 欢迎使用 JustRobot  ^_< ---------',
-            'en': ' ----- Welcome to use JustRobot  ^_< ------'
-        }))
+        self.log = Log(
+            {
+                'level': cfg['bot']['log_level'],
+                'lang': cfg['bot']['language']
+            }
+        )
+        asyncio.run(
+            self.log.info(
+                {
+                    'zh': ' -------- 欢迎使用 JustRobot  ^_< ---------',
+                    'en': ' ----- Welcome to use JustRobot  ^_< ------'
+                }
+            )
+        )
         self.bot = Core(self.log, cfg['bot'])
         self.bot.loader = self._loader
         self.translators, self.plugins = asyncio.run(self._loader.load(self.bot))
@@ -84,17 +96,25 @@ class Bot:
         _translator_num = len(self.bot.translator_name_list)
         _plugin_num = len(self.bot.plugin_name_list)
         asyncio.run(
-            self.log.info({
-                'zh': f'[Bot] 加载完成，共有{_adapter_num}个适配器，{_translator_num}个转译器，{_plugin_num}个插件',
-                'en': f'[Bot] Loaded {_adapter_num} adapters, {_translator_num} translators, {_plugin_num} plugins'
-            })
+            self.log.info(
+                {
+                    'zh': f'[Bot] 加载完成，共有{_adapter_num}个适配器，{_translator_num}个转译器，{_plugin_num}个插件',
+                    'en': f'[Bot] Loaded {_adapter_num} adapters, {_translator_num} translators, {_plugin_num} plugins'
+                }
+            )
         )
-        self.bot.load({
-            'translators': self.translators,
-            'plugins': self.plugins
-        })
+        self.bot.load(
+            {
+                'translators': self.translators,
+                'plugins': self.plugins
+            }
+        )
 
-    def run(self) -> None:
+    # 启动 Bot
+    # Start the Bot
+    def run(
+            self
+    ) -> None:
         """
         中文:
         启动 Bot。
@@ -104,7 +124,4 @@ class Bot:
         Start the Bot.
         :return: None.
         """
-        try:
-            asyncio.run(self._loader.run())
-        except SystemExit:
-            exit()
+        asyncio.run(self._loader.run())
