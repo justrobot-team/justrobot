@@ -124,4 +124,7 @@ class Bot:
         Start the Bot.
         :return: None.
         """
-        asyncio.run(self._loader.run())
+        try:
+            asyncio.run(self._loader.run())
+        except asyncio.CancelledError:
+            return

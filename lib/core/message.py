@@ -69,7 +69,7 @@ class Message:
     seq: str
     notice: str
     msg: str
-    file: Union[bytes, List[bytes]]
+    file: Union[bytes, List[bytes], None]
     user: Union[str, None] = None
     group: Union[str, None] = None
     channel: Union[str, None] = None

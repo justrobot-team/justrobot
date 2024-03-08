@@ -586,10 +586,8 @@ class Adapter:
                 'reply': self.reply
             }
         )
-        try:
-            await self.bot.deal(e)
-        except SystemExit:
-            exit()
+
+        return await self.bot.deal(e)
 
     # 发送消息的逻辑示例
     # Example for sending message
@@ -660,10 +658,10 @@ class Adapter:
         """
         # 简单示例
         # Basic example
-        while True:
-            msg = await self._recv_msg()
+        try:
+            while True:
 
-            try:
+                msg = await self._recv_msg()
                 _ = asyncio.create_task(self._deal(msg))
-            except SystemExit:
-                exit()
+        except asyncio.CancelledError:
+            return

@@ -15,7 +15,6 @@ class Plugin:
     属性:
         name: 插件名称
         notice: 监听消息类型
-        event: 监听事件类型
         replymessage: 回复消息构建实例
         pri: 优先级
         dsc: 匹配式
@@ -34,7 +33,6 @@ class Plugin:
     Attribute:
         name: Plugin name
         notice: Listening message type
-        event: Listening event type
         replymessage: Reply message construction instance
         pri: Priority
         dsc: Matching type
@@ -51,8 +49,6 @@ class Plugin:
     name = 'default-plugin'
     # 监听消息类型
     notice: str
-    # 监听事件类型
-    event: str
     # 回复消息构建实例
     replymessage: object
 
@@ -76,7 +72,7 @@ class Plugin:
     # 初始化
     def __init__(
             self
-            ) -> None:
+    ) -> None:
         pass
 
     # 插件载入
@@ -148,9 +144,6 @@ class Plugin:
         :param e: Message instance.
         :return: Whether it is successful(bool).
         """
-        e.reply(
-            self.replymessage(e).reply(
-                msg=e.msg
-            )
+        return await self.replymessage(e).reply(
+            msg=e.msg
         )
-        return True

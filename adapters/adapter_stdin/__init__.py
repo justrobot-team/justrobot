@@ -22,7 +22,17 @@ class Adapter:
 
     async def _recv_msg(self) -> dict:
         loop = asyncio.get_event_loop()
-        _msg = await loop.run_in_executor(None, input, '')
+        try:
+            _msg = await loop.run_in_executor(None, input, '')
+        except KeyboardInterrupt:
+            return {
+                'seq': 0,
+                'notice': 'text',
+                'msg': '/shutdown',
+                'file': None,
+                'user': 'stdin',
+                'time': str(time.time())
+            }
         _seq = self.Adapter.client.msg_recv
         return {
             'seq': _seq,

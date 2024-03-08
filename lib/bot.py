@@ -50,7 +50,7 @@ class JustRobot:
 
     def load(
             self
-    ) -> None:
+    ) -> object:
         """
         中文:
         加载配置文件、适配器、转译器、插件
@@ -73,6 +73,7 @@ class JustRobot:
             'plugin': _config_plugin
         }
         self.Bot.load(self.cfg)
+        return self
 
     def _translate_cfg(
             self,

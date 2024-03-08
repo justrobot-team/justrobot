@@ -30,7 +30,7 @@ class Translator:
             self,
             translators: dict,
             bot: object
-            ) -> None:
+    ) -> None:
         """
         中文:
         初始化 Translator 类。
@@ -53,7 +53,7 @@ class Translator:
     async def deal(
             self,
             e
-            ) -> None:
+    ) -> None:
         """
         中文:
         匹配并处理消息。
@@ -104,7 +104,7 @@ class Plugin:
             self,
             plugins: dict,
             bot: object
-            ) -> None:
+    ) -> None:
         """
         中文:
         初始化 Plugin 类。
@@ -126,7 +126,7 @@ class Plugin:
     async def deal(
             self,
             e
-            ) -> None:
+    ) -> None:
         """
         中文:
         匹配并处理消息。
@@ -153,11 +153,9 @@ class Plugin:
             if _fnc and msg_allow_deal:
 
                 try:
-
                     getattr(_plugin, _fnc)(e)
 
                 except AttributeError:
-
                     self.bot.log.error(
                         {
                             'zh': f'[{_plugin.name}] 未找到对应方法，跳过处理',
@@ -304,6 +302,7 @@ class Core:
         self.client = { }
         self.log = log
         self.loop = None
+        self.main_loop = None
         self.adapter_name_list = []
         self.translator_name_list = []
         self.plugin_name_list = []
@@ -388,8 +387,7 @@ class Core:
                         'zh': '[Bot] 关机中...', 'en': '[Bot] Shutting down...'
                     }
                 )
-                await self._shutdown()
-                exit(0)
+                return self._shutdown()
             else:
                 await self.log.info(
                     {
@@ -402,9 +400,9 @@ class Core:
         if self.plugin_name_list:
             await self._plugins.deal(e)
 
-    async def _shutdown(
+    def _shutdown(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         向全部协程发送取消信号，等待其全部取消后关闭机器人。
@@ -412,13 +410,13 @@ class Core:
         English:
         Send a cancel signal to all coroutines, wait for them to be cancelled then shut down the bot.
         """
-        [_task.cancel() for _task in list(asyncio.Task.all_tasks())]
-        await asyncio.gather(*asyncio.Task.all_tasks(), return_exceptions=True)
+        [_task.cancel() for _task in self.loop]
+        self.main_loop.cancel()
 
     @property
     def msg_recv(
             self
-            ) -> int:
+    ) -> int:
         """
         中文:
         返回接收到的消息数量。
@@ -431,7 +429,7 @@ class Core:
     @property
     def msg_send(
             self
-            ) -> int:
+    ) -> int:
         """
         中文:
         返回发送的消息数量。
@@ -443,7 +441,7 @@ class Core:
 
     def msg_recv_append(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         接收到的消息数量加一。
@@ -455,7 +453,7 @@ class Core:
 
     def msg_send_append(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         发送的消息数量加一。
@@ -500,7 +498,7 @@ class Core:
 
     def get_user_list(
             self
-            ) -> list:
+    ) -> list:
         """
         中文:
         返回 User ID 的列表。
@@ -516,7 +514,7 @@ class Core:
 
     def get_group_list(
             self
-            ) -> list:
+    ) -> list:
         """
         中文:
         返回 Group ID 的列表。
@@ -532,7 +530,7 @@ class Core:
 
     def get_channel_list(
             self
-            ) -> list:
+    ) -> list:
         """
         中文:
         返回 Channel ID 的列表。
@@ -548,7 +546,7 @@ class Core:
 
     def get_guild_list(
             self
-            ) -> list:
+    ) -> list:
         """
         中文:
         返回 Guild ID 的列表。
@@ -737,7 +735,7 @@ class Core:
 
         async def _error(
                 _message
-                ) -> bool:
+        ) -> bool:
             await self.log.error(
                 {
                     'zh': f'[Bot] {_message[0]}', 'en': f'[Bot] {_message[1]}'
@@ -827,7 +825,7 @@ class Core:
 
         async def _error(
                 _message
-                ) -> bool:
+        ) -> bool:
             await self.log.error(
                 {
                     'zh': f'[Bot] {_message[0]}',
@@ -921,7 +919,7 @@ class Core:
 
         async def _error(
                 _message
-                ) -> bool:
+        ) -> bool:
             await self.log.error(
                 {
                     'zh': f'[Bot] {_message[0]}',
@@ -1036,7 +1034,7 @@ class Core:
     def _set_guild_list(
             self,
             guid
-            ) -> None:
+    ) -> None:
         self._guild_list.append(guid)
 
     async def set_guild_list(
@@ -1060,7 +1058,7 @@ class Core:
 
         async def _error(
                 _message
-                ) -> bool:
+        ) -> bool:
             await self.log.error(
                 {
                     'zh': f'[Bot] {_message[0]}',
@@ -1118,7 +1116,7 @@ class Core:
 
     async def update_all_list(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         更新所有列表。
@@ -1135,7 +1133,7 @@ class Core:
 
     async def update_user_list(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         更新用户 ID 的列表。
@@ -1159,7 +1157,7 @@ class Core:
 
     async def update_group_list(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         更新群组 ID 的列表。
@@ -1183,7 +1181,7 @@ class Core:
 
     async def update_channel_list(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         更新频道 ID 的列表。
@@ -1207,7 +1205,7 @@ class Core:
 
     async def update_guild_list(
             self
-            ) -> None:
+    ) -> None:
         """
         中文:
         更新公会 ID 的列表。

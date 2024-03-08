@@ -178,7 +178,9 @@ class Adapter:
         if not self._adapters_path:
             return { }
 
-        await asyncio.gather(*(self._load_adapter(_path) for _path in self._adapters_path))
+        await asyncio.gather(
+            *(self._load_adapter(_path) for _path in self._adapters_path)
+        )
 
         for _name, _adapter in self.adapters.items():
             try:

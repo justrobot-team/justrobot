@@ -37,7 +37,7 @@ class User:
         id: User ID
         name: Username
         adapter: Adapter name
-        is_friend: Is friend
+        isfriend: Is friend
         info: User info
 
     Methods:
@@ -50,7 +50,7 @@ class User:
     id = 'default_user'
     name = id
     adapter = 'default_adapter'
-    is_friend = False
+    isfriend = False
     info = {
         'level': 16,
         'language': 'zh-cn',

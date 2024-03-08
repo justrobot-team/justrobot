@@ -2,11 +2,8 @@ from lib.bot import JustRobot
 
 
 def main() -> None:
-    Bot = JustRobot()
 
-    Bot.load()
-
-    Bot.run()
+    JustRobot().load().run()
 
 
 if __name__ == '__main__':
