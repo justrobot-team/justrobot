@@ -5,7 +5,6 @@ __pycache__/
 .idea/
 .vscode/
 /log/
-/translators/
 /plugins/
 /config/
 /adapters/*
