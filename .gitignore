@@ -8,7 +8,6 @@ __pycache__/
 /translators/
 /plugins/
 /config/
-/adapters/*
 !/adapters/adapter_stdin/
 /resources/*
 !/resources/default_img/
